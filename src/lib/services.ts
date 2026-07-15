@@ -162,7 +162,9 @@ export const registrationService = {
         password,
         status: 'active',
         deviceId: '',
-        registeredAt: new Date().toISOString()
+        registeredAt: new Date().toISOString(),
+        emailSent: true,
+        notificationSent: false
       };
       const docRef = await addDoc(regRef, newReg);
       return { id: docRef.id, ...newReg } as Registration;

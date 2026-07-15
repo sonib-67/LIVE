@@ -427,19 +427,19 @@ function startRegistrationEmailListener() {
         const data = change.doc.data();
 
         // Check if already dispatched
-        if (data.emailSent === true) {
+        if (data.notificationSent === true) {
           return;
         }
 
         const registeredTime = data.registeredAt ? new Date(data.registeredAt).getTime() : 0;
         const isRecent = (Date.now() - registeredTime) < 300000; // registered in last 5 minutes
 
-        if (!data.emailSent) {
+        if (!data.notificationSent) {
           // If it was created before our server booted and is NOT recent, we mark it as sent (skipped) so we don't spam.
           if (registeredTime > 0 && registeredTime < serverBootTime - 10000 && !isRecent) {
             console.log(`Skipping email for legacy registration: ${data.name || regId}. Marking as sent.`);
             try {
-              await updateDoc(doc(db, 'registrations', regId), { emailSent: true });
+              await updateDoc(doc(db, 'registrations', regId), { notificationSent: true });
             } catch (err) {
               console.error(`Failed to mark skipped registration ${regId} in DB:`, err);
             }
@@ -461,13 +461,13 @@ function startRegistrationEmailListener() {
 
             if (success) {
               await updateDoc(doc(db, 'registrations', regId), {
-                emailSent: true,
+                notificationSent: true,
                 emailDispatchedAt: new Date().toISOString()
               });
               console.log(`Firestore registration ${regId} successfully flagged as emailSent.`);
             } else {
               await updateDoc(doc(db, 'registrations', regId), {
-                emailSent: false,
+                notificationSent: false,
                 emailError: 'SMTP dispatch failed'
               });
             }
