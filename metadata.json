@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Organic Mushroom Farm",
+  "description": "Live Mushroom Training",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
