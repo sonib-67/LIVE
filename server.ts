@@ -456,7 +456,7 @@ function startRegistrationEmailListener() {
               data.studentId || 'N/A',
               data.password || 'N/A',
               data.joinToken || '',
-              process.env.APP_URL
+              'https://mushroomtraining.online'
             );
 
             if (success) {
