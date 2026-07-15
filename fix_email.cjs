@@ -1,83 +1,7 @@
-import nodemailer from 'nodemailer';
+const fs = require('fs');
+let file = fs.readFileSync('src/lib/emailService.ts', 'utf8');
 
-// Helper to clean quotes and whitespace from user-provided environment vars
-function cleanEnvVar(val: string | undefined, fallback: string): string {
-  if (!val) return fallback;
-  let clean = val.trim();
-  if ((clean.startsWith('"') && clean.endsWith('"')) || (clean.startsWith("'") && clean.endsWith("'"))) {
-    clean = clean.slice(1, -1).trim();
-  }
-  // Auto-correct common typos for smtp
-  if (clean.toLowerCase().startsWith('smpt.')) {
-    clean = 'smtp.' + clean.slice(5);
-  } else if (clean.toLowerCase() === 'smpt.hostinger.com') {
-    clean = 'smtp.hostinger.com';
-  }
-  return clean;
-}
-
-const SMTP_HOST = cleanEnvVar(process.env.SMTP_HOST, 'smtp.hostinger.com');
-const SMTP_PORT = parseInt(cleanEnvVar(process.env.SMTP_PORT, '465'));
-const SMTP_USER = cleanEnvVar(process.env.SMTP_USER, 'training@mushroomtraining.online');
-const SMTP_PASS = cleanEnvVar(process.env.SMTP_PASS, 'Sonib491@');
-const SMTP_FROM_NAME = cleanEnvVar(process.env.SMTP_FROM_NAME, 'Organic Mushroom Farm');
-const SMTP_SUPPORT_EMAIL = cleanEnvVar(process.env.SMTP_SUPPORT_EMAIL, 'support@mushroomtraining.online');
-const SMTP_SUPPORT_PHONE = cleanEnvVar(process.env.SMTP_SUPPORT_PHONE, '9203544140');
-
-// Lazy-initialized node transporter
-let transporter: any = null;
-
-function getTransporter() {
-  if (!transporter) {
-    const finalHost = cleanEnvVar(process.env.SMTP_HOST, 'smtp.hostinger.com');
-    const finalPort = parseInt(cleanEnvVar(process.env.SMTP_PORT, '465'));
-    const finalUser = cleanEnvVar(process.env.SMTP_USER, 'training@mushroomtraining.online');
-    const finalPass = cleanEnvVar(process.env.SMTP_PASS, 'Sonib491@');
-
-    console.log(`[SMTP CONFIG DIAGNOSTICS]`);
-    console.log(`- SMTP_HOST: "${finalHost}"`);
-    console.log(`- SMTP_PORT: ${finalPort}`);
-    console.log(`- SMTP_USER: "${finalUser}"`);
-    console.log(`- SMTP_PASS length: ${finalPass ? finalPass.length : 0}`);
-    console.log(`- SMTP_PASS starts with: "${finalPass ? finalPass[0] : ''}" and ends with: "${finalPass ? finalPass[finalPass.length - 1] : ''}"`);
-    
-    transporter = nodemailer.createTransport({
-      host: finalHost,
-      port: finalPort,
-      secure: finalPort === 465, // True for 465, false for 587
-      auth: {
-        user: finalUser,
-        pass: finalPass,
-      },
-      tls: {
-        rejectUnauthorized: false // Helps prevent SSL certificate match failures on sandboxes
-      }
-    });
-  }
-  return transporter;
-}
-
-/**
- * Sends a highly styled HTML email confirmation upon successful registration.
- * Fully compliant with the no-forbidden-words directive (No 'training', 'student', or 'webinar').
- */
-export async function sendRegistrationEmail(
-  toEmail: string,
-  attendeeName: string,
-  accessId: string,
-  accessPass: string,
-  joinToken: string,
-  appUrlFromRequest?: string
-): Promise<boolean> {
-  const appBaseUrl = 'https://mushroomtraining.online';
-  // Standardize trailing slash removal
-  const normalizedBaseUrl = appBaseUrl.endsWith('/') ? appBaseUrl.slice(0, -1) : appBaseUrl;
-  const joinUrl = `${normalizedBaseUrl}/live/${joinToken}`;
-
-  const subject = `Your Live Broadcast Access Code & Credentials - Organic Mushroom Farm`;
-
-  const htmlContent = `
-    <!DOCTYPE html>
+const updatedHtmlTemplate = `    <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
@@ -205,7 +129,7 @@ export async function sendRegistrationEmail(
 
         <!-- Content -->
         <div class="content">
-          <p>Hello <strong>${attendeeName}</strong>,</p>
+          <p>Hello <strong>\${attendeeName}</strong>,</p>
           <p>Thank you for securing your entry. Your registration has been processed successfully!</p>
           <p>Below are your credentials and direct access details to join our upcoming live broadcast session. Please keep this information safe and do not share it with anyone else.</p>
 
@@ -215,32 +139,32 @@ export async function sendRegistrationEmail(
               <tr>
                 <td style="padding: 16px 0; border-bottom: 1px solid #e2e8f0;">
                   <span style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Name</span><br /><br />
-                  <span style="font-size: 18px; font-weight: 700; color: #0f172a;">${attendeeName}</span>
+                  <span style="font-size: 18px; font-weight: 700; color: #0f172a;">\${attendeeName}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 16px 0; border-bottom: 1px solid #e2e8f0;">
                   <span style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Access ID</span><br /><br />
-                  <span style="font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; color: #4f46e5; font-size: 18px; letter-spacing: 0.5px; font-weight: bold;">${accessId}</span>
+                  <span style="font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; color: #4f46e5; font-size: 18px; letter-spacing: 0.5px; font-weight: bold;">\${accessId}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 16px 0; border-bottom: 1px solid #e2e8f0;">
                   <span style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Verification Password</span><br /><br />
-                  <span style="font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; color: #4f46e5; font-size: 18px; letter-spacing: 0.5px; font-weight: bold;">${accessPass}</span>
+                  <span style="font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; color: #4f46e5; font-size: 18px; letter-spacing: 0.5px; font-weight: bold;">\${accessPass}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 16px 0;">
                   <span style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Your Access Link</span><br /><br />
-                  <div style="background-color: #ffffff; border-radius: 8px; padding: 12px; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; color: #334155; word-break: break-all; border: 1px solid #e2e8f0;">${joinUrl}</div>
+                  <div style="background-color: #ffffff; border-radius: 8px; padding: 12px; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; color: #334155; word-break: break-all; border: 1px solid #e2e8f0;">\${joinUrl}</div>
                 </td>
               </tr>
             </table>
           </div>
 
           <!-- Join Button -->
-          <a href="${joinUrl}" class="btn">Click Here to Enter the Session</a>
+          <a href="\${joinUrl}" class="btn">Click Here to Enter the Session</a>
 
           <!-- Steps to Join -->
           <h3 style="font-size: 15px; color: #0f172a; margin-top: 28px; font-weight: 700;">Steps to Join:</h3>
@@ -261,36 +185,22 @@ export async function sendRegistrationEmail(
             <h3>Support &amp; Help Desk</h3>
             <div class="helpdesk-info">
               If you face any issues entering the session room, contact our helper desk team immediately:<br><br>
-              📧 Email Support: <a href="mailto:${SMTP_SUPPORT_EMAIL}">${SMTP_SUPPORT_EMAIL}</a><br>
-              💬 WhatsApp Line: <a href="https://wa.me/91${SMTP_SUPPORT_PHONE}">+91 ${SMTP_SUPPORT_PHONE}</a>
+              📧 Email Support: <a href="mailto:\${SMTP_SUPPORT_EMAIL}">\${SMTP_SUPPORT_EMAIL}</a><br>
+              💬 WhatsApp Line: <a href="https://wa.me/91\${SMTP_SUPPORT_PHONE}">+91 \${SMTP_SUPPORT_PHONE}</a>
             </div>
           </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-          &copy; ${new Date().getFullYear()} Organic Mushroom Farm. All rights reserved.<br>
+          &copy; \${new Date().getFullYear()} Organic Mushroom Farm. All rights reserved.<br>
           For security reasons, do not forward this message.
         </div>
       </div>
     </body>
-    </html>
-  `.trim();
+    </html>`;
 
-  try {
-    const mailOptions = {
-      from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
-      to: toEmail,
-      subject: subject,
-      html: htmlContent
-    };
-
-    console.log(`Sending automated confirmation email to: "${toEmail}" via Hostinger SMTP...`);
-    const info = await getTransporter().sendMail(mailOptions);
-    console.log(`Email successfully dispatched directly to ${toEmail}. MessageID: ${info.messageId}`);
-    return true;
-  } catch (err) {
-    console.error(`CRITICAL: Node automated email dispatch failed for ${toEmail}:`, err);
-    return false;
-  }
-}
+const startIdx = file.indexOf('    <!DOCTYPE html>');
+const endIdx = file.indexOf('`.trim();', startIdx);
+file = file.substring(0, startIdx) + updatedHtmlTemplate + '\n  ' + file.substring(endIdx);
+fs.writeFileSync('src/lib/emailService.ts', file);
