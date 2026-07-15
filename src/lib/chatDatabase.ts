@@ -1,5 +1,5 @@
 // Procedural generation database for Indian names and Hinglish Mushroom Farming comments
-// Strictly conforms to the constraint: NEVER use "Sir", always use "Ma'am" for trainers!
+// Strictly conforms to the constraint: NEVER use "Ma'am", always use "Ma'am" for trainers!
 
 export const MALE_FIRST_NAMES = [
   'Amit', 'Rahul', 'Arjun', 'Aarav', 'Deepak', 'Vijay', 'Rajesh', 'Manish', 'Suresh', 'Karan',
@@ -26,24 +26,24 @@ export const LAST_NAMES = [
 ];
 
 const INTROS = [
-  "Ma'am, ",
-  "Hello Ma'am, ",
-  "Namaste Ma'am, ",
-  "Hii Ma'am, ",
-  "Good evening Ma'am, ",
-  "Mera ek clear question hai Ma'am, ",
-  "Please answer me Ma'am, ",
-  "Ma'am please help, ",
-  "Can you guide us Ma'am, ",
-  "Ma'am, mai Bihar se hu, ",
-  "Ma'am, mai MP se bol raha hu, ",
+  "",
+  "Hello ",
+  "Namaste ",
+  "Hii ",
+  "Good evening ",
+  "Mera ek clear question hai ",
+  "Please answer me ",
+  "please help, ",
+  "Can you guide us ",
+  "mai Bihar se hu, ",
+  "mai MP se bol raha hu, ",
   "Mushroom setup me, ",
   "Mushroom farming start krte time, ",
   "Maine abhi training join ki h, ",
-  "Actually Ma'am, ",
-  "Is topic pr doubt tha Ma'am, ",
+  "Actually ",
+  "Is topic pr doubt tha ",
   "Bahut helpful class chal rhi h, par ",
-  "Ma'am ek guidance chahiye thi, ",
+  "ek guidance chahiye thi, ",
   "Muje poochna tha ki ",
   "Kya "
 ];
@@ -89,28 +89,28 @@ const ACTIONS = [
 ];
 
 const FEEDBACKS_PRAISES = [
-  "Aapka screen display setup perfectly visible h Ma'am 👍",
-  "Audio is absolutely clean, clear voice Ma'am",
+  "Aapka screen display setup perfectly visible h 👍",
+  "Audio is absolutely clean, clear voice",
   "Sahi me bhut detail me organic mushroom sikha rhe ho aap",
-  "Ma'am slides presentation simple and comprehensive h",
+  "slides presentation simple and comprehensive h",
   "Amazing explanation, all steps are completely crystal clear!",
-  "UP, Varanasi se dekh rhi hu, live support accha h Ma'am 🔥",
-  "Yes Ma'am, properly visualising and listing points",
+  "UP, Varanasi se dekh rhi hu, live support accha h 🔥",
+  "Yes properly visualising and listing points",
   "This is the best mushroom farming webinar I have attended",
   "Mera sara basic doubt clear ho gya mushroom cultivation pr",
-  "Thank you Ma'am for explaining buyback rules so transparently",
+  "Thank you for explaining buyback rules so transparently",
   "Very useful slideshow representation 🍄",
   "Mushroom farming ka potential sach me India me high h!",
   "Your background visual and live chat speed is comfortable",
   "Hume setup blueprint template files group link par milegi kya?",
   "Perfect training, standard procedures clearly structured",
   "Mera setup complete h, spawn delivery ka wait h organic farm se 👍",
-  "Ma'am certificates scan mechanism and test timing sahi rkha h",
-  "Excellent presentation Ma'am, full rating class ke baad dunga"
+  "certificates scan mechanism and test timing sahi rkha h",
+  "Excellent presentation full rating class ke baad dunga"
 ];
 
 const SHORT_TAGS = [
-  "👍", "🔥", "🍄", "❤️", "💯", "👌", "🤩", "🙌", "धन्यवाद Ma'am", "Mushroom cultivation op!", "Pranam Ma'am", "Super clear session"
+  "👍", "🔥", "🍄", "❤️", "💯", "👌", "🤩", "🙌", "धन्यवाद", "Mushroom cultivation op!", "Pranam", "Super clear session"
 ];
 
 export function getRandomName(): string {
@@ -177,8 +177,8 @@ export function getContextualReply(userInputText: string): string {
   }
   
   const generalStandardReplies = [
-    "Aapki clear query bilkul accurate h! Ma'am abhi exact isi scale parameter layout slides ko clear screen flow me properly highlight karke cover karne wale h.",
-    "Bhut badhiya and important question poocha aapne! live context details QnA slide round me directly support or queries answers ke along open rkhenge Ma'am.",
+    "Aapki clear query bilkul accurate h! abhi exact isi scale parameter layout slides ko clear screen flow me properly highlight karke cover karne wale h.",
+    "Bhut badhiya and important question poocha aapne! live context details QnA slide round me directly support or queries answers ke along open rkhenge.",
     "Hum active mushroom student support sheet and files direct resources tab me de rahe hain, perfect setups details visual notes check rkhein."
   ];
   return generalStandardReplies[Math.floor(Math.random() * generalStandardReplies.length)];

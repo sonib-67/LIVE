@@ -313,13 +313,13 @@ function startSessionSimulators() {
                         try {
                           const result = await ai.models.generateContent({
                             model: 'gemini-2.5-flash',
-                            contents: `You are answering a student's live chat question as "Trainer Support" (representing Ma'am's assistant).
+                            contents: `You are answering a student's live chat question as "Trainer Support" (representing Trainer's assistant).
 CRITICAL RULES:
 1. ONLY answer the student's question directly and concisely.
 2. MUST start your reply by naturally addressing the student by name tagging, e.g., "@${chatDocData.name} "
-3. DO NOT ask questions to Ma'am in the reply.
+3. DO NOT ask questions to Trainer in the reply.
 4. DO NOT create fake questions from the trainer's side.
-5. DO NOT say things like "Ma'am, Rahul ka question hai..." or "Ma'am, please answer Rahul".
+5. DO NOT say things like "Trainer, Rahul ka question hai..." or "Trainer, please answer Rahul".
 6. Speak as if you are the trainer support team directly providing the answer in simple, friendly Hinglish (Hindi + English).
 7. Give a highly relevant, concise, and direct explanation. Use 1 or 2 sentences maximum.
 

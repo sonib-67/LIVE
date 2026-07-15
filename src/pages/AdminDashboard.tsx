@@ -368,7 +368,7 @@ export default function AdminDashboard() {
     try {
       const chatsRef = collection(db, 'sessions', selectedSession.id, 'chats');
       await addDoc(chatsRef, {
-        name: "🎤 Host (Trainer Ma'am)",
+        name: "🎤 Host (Trainer)",
         text: chatInput,
         createdAt: Date.now(),
         type: 'admin',
