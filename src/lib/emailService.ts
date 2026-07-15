@@ -69,7 +69,7 @@ export async function sendRegistrationEmail(
   joinToken: string,
   appUrlFromRequest?: string
 ): Promise<boolean> {
-  const appBaseUrl = appUrlFromRequest || process.env.APP_URL || 'https://mushroomtraining.online';
+  const appBaseUrl = 'https://mushroomtraining.online';
   // Standardize trailing slash removal
   const normalizedBaseUrl = appBaseUrl.endsWith('/') ? appBaseUrl.slice(0, -1) : appBaseUrl;
   const joinUrl = `${normalizedBaseUrl}/live/${joinToken}`;
@@ -250,22 +250,32 @@ export async function sendRegistrationEmail(
 
           <!-- Credentials Card -->
           <div class="credentials-card">
-            <div class="credential-row">
-              <span class="credential-label">Name</span>
-              <span class="credential-value">${attendeeName}</span>
-            </div>
-            <div class="credential-row">
-              <span class="credential-label">Access ID</span>
-              <span class="credential-code">${accessId}</span>
-            </div>
-            <div class="credential-row">
-              <span class="credential-label">Verification Password</span>
-              <span class="credential-code">${accessPass}</span>
-            </div>
-            <div class="credential-row" style="display: block; border-bottom: none; padding-top: 12px;">
-              <span class="credential-label" style="display: block; margin-bottom: 6px;">Your Access Link</span>
-              <div class="credential-link-block">${joinUrl}</div>
-            </div>
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <div style="font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Name</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #ffffff;">${attendeeName}</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <div style="font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Access ID</div>
+                  <div style="font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; color: #c084fc; font-size: 16px; letter-spacing: 0.5px; font-weight: bold;">${accessId}</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <div style="font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Verification Password</div>
+                  <div style="font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; color: #c084fc; font-size: 16px; letter-spacing: 0.5px; font-weight: bold;">${accessPass}</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; padding-top: 16px;">
+                  <div style="font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Your Access Link</div>
+                  <div style="background-color: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 12px; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 12px; color: #a8b8d0; word-break: break-all; border: 1px solid rgba(255, 255, 255, 0.05);">${joinUrl}</div>
+                </td>
+              </tr>
+            </table>
           </div>
 
           <!-- Join Button -->

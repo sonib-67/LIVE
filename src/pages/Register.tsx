@@ -263,7 +263,7 @@ export default function Register() {
                   <div className="flex flex-col space-y-1.5 py-2">
                     <span className="text-white/40 dark:text-white/40 light:text-slate-500 text-xs sm:text-sm font-medium">Live Join Link:</span>
                     <div className="bg-black/60 dark:bg-black/60 light:bg-white border border-white/10 dark:border-white/10 light:border-slate-200 p-2.5 rounded-xl font-mono text-[10px] sm:text-xs text-white/80 dark:text-white/80 light:text-slate-800 break-all select-all shadow-inner">
-                      {`${window.location.origin}/live/${success.joinToken}`}
+                      {`https://mushroomtraining.online/live/${success.joinToken}`}
                     </div>
                   </div>
                 </div>
