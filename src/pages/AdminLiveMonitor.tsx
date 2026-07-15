@@ -194,7 +194,7 @@ export default function AdminLiveMonitor() {
         <h2 className="text-xl font-bold mb-2 text-white">Initialization Error</h2>
         <p className="text-slate-400 mb-6 text-center max-w-sm">{error || 'Unable to connect to active session.'}</p>
         <button 
-          onClick={() => navigate('/admin')}
+          onClick={() => navigate('/admin/78794108')}
           className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all active:scale-95"
         >
           Return to Admin Dashboard
@@ -452,7 +452,7 @@ export default function AdminLiveMonitor() {
       <header className="h-16 px-4 sm:px-6 bg-[#0c081e]/80 border-b border-white/10 flex items-center justify-between shrink-0 backdrop-blur-md relative z-20">
         <div className="flex items-center gap-3">
           <button 
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/admin/78794108')}
             className="p-2 hover:bg-white/5 border border-white/5 text-zinc-400 hover:text-white rounded-xl transition cursor-pointer"
             title="Return to Dashboard"
           >

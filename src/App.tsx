@@ -28,18 +28,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) return <Navigate to="/admin/login" replace />;
+  if (!user) return <Navigate to="/admin/login/78794108" replace />;
 
   return <>{children}</>;
+}
+
+function ExternalRedirect() {
+  React.useEffect(() => {
+    window.location.href = "https://organicmushroomfarm.shop";
+  }, []);
+  return null;
 }
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/login/78794108" element={<AdminLogin />} />
         <Route
-          path="/admin"
+          path="/admin/78794108"
           element={
             <ProtectedRoute>
               <AdminDashboard />
@@ -47,7 +54,7 @@ export default function App() {
           }
         />
         <Route
-          path="/admin/live/:sessionId"
+          path="/admin/live/78794108/:sessionId"
           element={
             <ProtectedRoute>
               <AdminLiveMonitor />
@@ -58,7 +65,7 @@ export default function App() {
         <Route path="/live/:joinToken" element={<LiveSession />} />
         <Route path="/complete" element={<Completion />} />
         <Route path="/live-complete" element={<Completion />} />
-        <Route path="/" element={<Navigate to="/admin" replace />} />
+        <Route path="/" element={<ExternalRedirect />} />
       </Routes>
     </BrowserRouter>
   );

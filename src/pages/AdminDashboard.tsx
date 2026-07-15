@@ -508,7 +508,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await signOut(auth);
-    navigate('/admin/login');
+    navigate('/admin/login/78794108');
   };
 
   return (
@@ -632,7 +632,7 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={() => {
-                        navigate(`/admin/live/${selectedSession.id}`);
+                        navigate(`/admin/live/78794108/${selectedSession.id}`);
                       }}
                       className="p-2.5 bg-red-600/10 hover:bg-red-600 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] border border-red-500/30 rounded-xl text-red-400 hover:text-white transition-all shadow-md cursor-pointer text-xs sm:text-sm font-bold flex items-center gap-1.5 animate-pulse shrink-0"
                     >
