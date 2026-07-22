@@ -55,6 +55,12 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Prevent indexing for the entire site
+  app.use((req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    next();
+  });
+
   app.get('/api/apivideo-token', async (req, res) => {
     try {
       const apiKey = process.env.APIVIDEO_API_KEY || 'whQUXM00kPMcMAM7tAfLsJfR6LfOTSRD2hQFWclxuUY';
