@@ -516,7 +516,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await signOut(auth);
-    navigate('/admin/login');
+    navigate('/78794108');
   };
 
   return (

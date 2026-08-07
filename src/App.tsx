@@ -13,6 +13,13 @@ import LiveSession from './pages/LiveSession';
 import Completion from './pages/Completion';
 import { useAuth } from './hooks/useAuth';
 
+const ExternalRedirect = ({ to }: { to: string }) => {
+  React.useEffect(() => {
+    window.location.href = to;
+  }, [to]);
+  return null;
+};
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
@@ -28,7 +35,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) return <Navigate to="/admin/login" replace />;
+  if (!user) return <Navigate to="/78794108" replace />;
 
   return <>{children}</>;
 }
@@ -37,7 +44,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/78794108" element={<AdminLogin />} />
         <Route
           path="/admin"
           element={
@@ -58,7 +65,7 @@ export default function App() {
         <Route path="/live/:joinToken" element={<LiveSession />} />
         <Route path="/complete" element={<Completion />} />
         <Route path="/live-complete" element={<Completion />} />
-        <Route path="/" element={<Navigate to="/admin" replace />} />
+        <Route path="/" element={<ExternalRedirect to="https://organicmushroomsfarm.com/services" />} />
       </Routes>
     </BrowserRouter>
   );
