@@ -167,6 +167,7 @@ export const registrationService = {
         notificationSent: false
       };
       const docRef = await addDoc(regRef, newReg);
+      try { await fetch('/api/send-registration-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...newReg, id: docRef.id }) }); } catch (e) { console.error('Failed to trigger API email', e); }
       return { id: docRef.id, ...newReg } as Registration;
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'registrations');

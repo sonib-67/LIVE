@@ -1,3 +1,4 @@
+import apiRouter from "./src/server/api.js";
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
@@ -63,47 +64,8 @@ async function startServer() {
     next();
   });
 
-  app.get('/api/apivideo-token', async (req, res) => {
-    try {
-      const apiKey = process.env.APIVIDEO_API_KEY || 'whQUXM00kPMcMAM7tAfLsJfR6LfOTSRD2hQFWclxuUY';
+  app.use('/api', apiRouter);
 
-      // 1. Get access token
-      const authRes = await fetch('https://sandbox.api.video/auth/api-key', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey })
-      });
-      const authData = await authRes.json();
-      
-      if (!authData.access_token) {
-        throw new Error('Failed to authenticate with api.video: ' + JSON.stringify(authData));
-      }
-
-      // 2. Create delegated upload token
-      const tokenRes = await fetch('https://sandbox.api.video/upload-tokens', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${authData.access_token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ttl: 3600 })
-      });
-      const tokenData = await tokenRes.json();
-      
-      if (!tokenData.token) {
-        throw new Error('Failed to create upload token: ' + JSON.stringify(tokenData));
-      }
-
-      res.json({ token: tokenData.token });
-    } catch (error: any) {
-      console.error("API Video Token Error:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  app.get('/api/time', (req, res) => {
-    res.json({ serverTime: Date.now() });
-  });
 
   // Start background live sessions simulators
   startSessionSimulators();
