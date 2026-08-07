@@ -1,3 +1,4 @@
+import { sendRegistrationEmail } from '../src/lib/emailService';
 import express from 'express';
 import cors from 'cors';
 
@@ -46,9 +47,7 @@ router.get('/apivideo-token', async (req, res) => {
 
 router.post('/send-registration-email', async (req, res) => {
   try {
-    // Dynamically import to prevent Vercel initialization crashes if module resolution fails
-    const { sendRegistrationEmail } = await import('../src/lib/emailService.js');
-    
+
     const data = req.body;
     const success = await sendRegistrationEmail(
       data.email,

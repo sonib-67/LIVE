@@ -280,7 +280,7 @@ export async function sendRegistrationEmail(
   try {
     const mailOptions = {
       from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
-      replyTo: 'no-reply@organicmushroomsfarm.com',
+      replyTo: 'no-reply@mushroomtraining.online',
       to: toEmail,
       subject: subject,
       html: htmlContent

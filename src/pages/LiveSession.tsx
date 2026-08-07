@@ -25,7 +25,7 @@ export default function LiveSession() {
   const [isCustomFullscreen, setIsCustomFullscreen] = useState(false);
   const [isFullscreenChatOpen, setIsFullscreenChatOpen] = useState(false);
   
-  const [phase, setPhase] = useState<'waiting' | 'live' | 'ended'>('waiting');
+  const [phase, setPhase] = useState<'waiting' | 'live' | 'today_completed' | 'ended'>('waiting');
   const [isEvicted, setIsEvicted] = useState(false);
 
   // Secure login state checks
@@ -393,7 +393,7 @@ export default function LiveSession() {
     }
   };
 
-  const [activeClassInfo, setActiveClassInfo] = useState<{ dayIndex: number, currentUrl: string, targetStartTimeMs: number, isEnded: boolean, isDuringTraining: boolean } | null>(null);
+  const [activeClassInfo, setActiveClassInfo] = useState<{ dayIndex: number, currentUrl: string, targetStartTimeMs: number, isEnded: boolean, isDuringTraining: boolean, isTodayCompleted: boolean } | null>(null);
 
   const checkPhase = (sess: Session) => {
     const currentNow = now();
@@ -404,6 +404,8 @@ export default function LiveSession() {
       setPhase('ended');
     } else if (info.isDuringTraining) {
       setPhase('live');
+    } else if (info.isTodayCompleted) {
+      setPhase('today_completed');
     } else {
       setPhase('waiting');
     }
@@ -653,6 +655,18 @@ export default function LiveSession() {
        {/* Main Content Pane */}
        <main className="flex-1 relative flex overflow-hidden">
          <AnimatePresence mode="wait">
+         {phase === 'today_completed' && activeClassInfo && (
+           <motion.div key="completed" className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a051b]">
+             <div className="text-center p-8 bg-slate-900/50 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl max-w-md w-full mx-4">
+               <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                 <ThumbsUp className="w-8 h-8 text-green-400" />
+               </div>
+               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Day {activeClassInfo.dayIndex + 1} Training Complete!</h2>
+               <p className="text-slate-300 text-base mb-6">Great job completing today's session. The countdown for the next session will automatically start at midnight.</p>
+               <p className="text-sm font-medium tracking-wide text-indigo-400 uppercase">See you tomorrow!</p>
+             </div>
+           </motion.div>
+         )}
          {phase === 'waiting' && activeClassInfo && (
            <motion.div key="countdown" className="absolute inset-0 z-10 flex">
              <LiveCountdown 

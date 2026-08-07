@@ -1,4 +1,6 @@
-import { Session } from '../types';
+import fs from 'fs';
+
+const content = `import { Session } from '../types';
 
 export function getActiveClassInfo(session: Session, currentNowMs?: number) {
   const urls = session.playbackUrls && session.playbackUrls.length > 0 
@@ -58,3 +60,6 @@ export function getActiveClassInfo(session: Session, currentNowMs?: number) {
     endMs
   };
 }
+`;
+
+fs.writeFileSync('src/lib/sessionUtils.ts', content);
