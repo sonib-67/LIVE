@@ -35,7 +35,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) return <Navigate to="/78794108" replace />;
+  if (!user) return <Navigate to="/787941" replace />;
 
   return <>{children}</>;
 }
@@ -44,9 +44,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/78794108" element={<AdminLogin />} />
+        <Route path="/787941" element={<AdminLogin />} />
         <Route
-          path="/admin"
+          path="/787941/dashboard"
           element={
             <ProtectedRoute>
               <AdminDashboard />
@@ -54,7 +54,7 @@ export default function App() {
           }
         />
         <Route
-          path="/admin/live/:sessionId"
+          path="/787941/live/:sessionId"
           element={
             <ProtectedRoute>
               <AdminLiveMonitor />
@@ -66,6 +66,7 @@ export default function App() {
         <Route path="/complete" element={<Completion />} />
         <Route path="/live-complete" element={<Completion />} />
         <Route path="/" element={<ExternalRedirect to="https://organicmushroomsfarm.com/services" />} />
+        <Route path="*" element={<ExternalRedirect to="https://organicmushroomsfarm.com/services" />} />
       </Routes>
     </BrowserRouter>
   );

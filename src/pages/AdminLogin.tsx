@@ -21,7 +21,7 @@ export default function AdminLogin() {
     setError(null);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/admin');
+      navigate('/787941/dashboard');
     } catch (err: any) {
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         setError('Invalid email or password.');
