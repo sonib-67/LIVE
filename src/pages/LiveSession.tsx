@@ -708,6 +708,10 @@ export default function LiveSession() {
                       <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-400 uppercase tracking-widest font-bold mb-0.5 font-sans">Contact No.</span>
                       <span className="font-mono text-zinc-300 dark:text-zinc-300 light:text-slate-600 font-medium tracking-wide">{registration.mobile || 'N/A'}</span>
                     </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-400 uppercase tracking-widest font-bold mb-0.5 font-sans">Session Info</span>
+                      <span className="font-extrabold text-amber-400 dark:text-amber-400 light:text-amber-600 tracking-wide text-xs sm:text-sm flex items-center gap-1"><Play className="w-3.5 h-3.5" /> Day {activeClassInfo.dayIndex + 1} Training</span>
+                    </div>
                     <div className="flex flex-col border-l border-white/10 pl-4 py-0.5">
                       <span className="text-[10px] text-[#a8b8d0] uppercase tracking-widest font-bold mb-0.5 font-sans flex items-center gap-1">Support Help Desk</span>
                       <div className="flex flex-col text-[10px] sm:text-xs">
