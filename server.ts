@@ -23,6 +23,8 @@ import {
 } from './src/lib/chatDatabase.ts';
 import { sendRegistrationEmail } from './src/lib/emailService.ts';
 
+import { getActiveClassInfo } from './src/lib/sessionUtils.ts';
+
 dotenv.config();
 
 // Initialize Firebase client on server-side
@@ -168,10 +170,7 @@ function startSessionSimulators() {
             const freshData = freshSnap.data();
 
             const nowMs = Date.now();
-            const startMs = freshData.startTimeMs || new Date(freshData.startTime).getTime();
-            const durationMin = freshData.durationMinutes || 60;
-            const endMs = startMs + durationMin * 60 * 1000;
-            const isDuringTraining = nowMs >= startMs && nowMs <= endMs;
+            const { isDuringTraining } = getActiveClassInfo(freshData as any);
 
             if (!isDuringTraining) {
                return; // Do not simulate metrics if not during training
@@ -217,11 +216,7 @@ function startSessionSimulators() {
             const sData = snap.data();
 
             const nowMs = Date.now();
-            const startMs = sData.startTimeMs || new Date(sData.startTime).getTime();
-            const durationMin = sData.durationMinutes || 60;
-            const endMs = startMs + durationMin * 60 * 1000;
-
-            const isDuringTraining = nowMs >= startMs && nowMs <= endMs;
+            const { isDuringTraining } = getActiveClassInfo(sData as any);
 
             if (!sData.autoChatEnabled || !isDuringTraining) {
               // Idle check again in 5 seconds

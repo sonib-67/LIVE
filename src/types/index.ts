@@ -4,6 +4,7 @@ export interface Session {
   title: string;
   description: string;
   playbackUrl: string; // HLS m3u8 or embed code or direct URL
+  playbackUrls?: string[]; // Array of up to 5 URLs for multi-day sessions
   videoSourceType?: 'upload' | 'embed' | 'hls';
   startTime: string; // local ISO string
   startTimeMs?: number; // UTC timestamp resolving timezone bugs

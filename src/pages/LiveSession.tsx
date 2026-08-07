@@ -2,6 +2,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { sessionService, registrationService } from '../lib/services';
 import { Session, Registration } from '../types';
+import { getActiveClassInfo } from '../lib/sessionUtils';
 import VideoPlayer from '../components/VideoPlayer';
 import LiveChat from '../components/LiveChat';
 import LiveCountdown from '../components/LiveCountdown';
@@ -251,16 +252,37 @@ export default function LiveSession() {
         localStorage.setItem('omf_device_id', devId);
       }
 
-      const registeredDeviceId = currentTokenReg.deviceId;
+      let registeredDeviceId = currentTokenReg.deviceId;
+
+      // Auto-reset device binding at midnight (new calendar day)
+      if (registeredDeviceId) {
+        const lastActiveStr = currentTokenReg.lastActiveAt || currentTokenReg.joinTime || currentTokenReg.registeredAt;
+        if (lastActiveStr) {
+          const lastActiveDate = new Date(lastActiveStr);
+          const nowDate = new Date();
+          
+          const isNewDay = 
+            lastActiveDate.getFullYear() !== nowDate.getFullYear() ||
+            lastActiveDate.getMonth() !== nowDate.getMonth() ||
+            lastActiveDate.getDate() !== nowDate.getDate();
+
+          if (isNewDay) {
+            // It's a new day! Reset the device lock to allow login from a new device
+            registeredDeviceId = undefined;
+            // The database will be updated with the new devId below
+          }
+        }
+      }
+
       if (registeredDeviceId && registeredDeviceId !== devId) {
         setLoginError("Multiple device detected. Please continue from your registered device.");
         setIsLoggingIn(false);
         return;
       }
 
-      // First successful login on browser. Register browser fingerprint to Firestore.
-      if (!registeredDeviceId) {
-        await registrationService.updateRegistration(currentTokenReg.id, { deviceId: devId });
+      // First successful login on browser or after a daily reset. Register browser fingerprint to Firestore.
+      if (!registeredDeviceId || registeredDeviceId !== devId) {
+        await registrationService.updateRegistration(currentTokenReg.id, { deviceId: devId, lastActiveAt: new Date().toISOString() });
         setRegistration(prev => prev ? { ...prev, deviceId: devId } : null);
       }
 
@@ -371,20 +393,21 @@ export default function LiveSession() {
     }
   };
 
+  const [activeClassInfo, setActiveClassInfo] = useState<{ dayIndex: number, currentUrl: string, targetStartTimeMs: number, isEnded: boolean, isDuringTraining: boolean } | null>(null);
+
   const checkPhase = (sess: Session) => {
     const currentNow = now();
-    const start = sess.startTimeMs || new Date(sess.startTime).getTime();
-    const durationMs = sess.durationMinutes * 60 * 1000;
-    const end = start + durationMs;
+    const info = getActiveClassInfo(sess, currentNow);
+    setActiveClassInfo(info);
     
-    if (currentNow < start) {
-       setPhase('waiting');
-    } else if (currentNow >= start && currentNow <= end) {
-       setPhase('live');
+    if (info.isEnded && !info.isDuringTraining) {
+      setPhase('ended');
+    } else if (info.isDuringTraining) {
+      setPhase('live');
     } else {
-       setPhase('ended');
-     }
-   };
+      setPhase('waiting');
+    }
+  };
  
    useEffect(() => {
      if (!session || !isSynced) return;
@@ -630,10 +653,10 @@ export default function LiveSession() {
        {/* Main Content Pane */}
        <main className="flex-1 relative flex overflow-hidden">
          <AnimatePresence mode="wait">
-         {phase === 'waiting' && (
+         {phase === 'waiting' && activeClassInfo && (
            <motion.div key="countdown" className="absolute inset-0 z-10 flex">
              <LiveCountdown 
-               targetTime={session.startTime}
+               targetTime={new Date(activeClassInfo.targetStartTimeMs).toISOString()}
                attendeeName={registration.name}
                onZero={() => setPhase('live')}
              />
@@ -641,15 +664,15 @@ export default function LiveSession() {
          )}
          </AnimatePresence>
  
-         {phase === 'live' && (
+         {phase === 'live' && activeClassInfo && (
             <section className="flex-1 flex flex-col lg:flex-row w-full max-w-7xl mx-auto p-3 sm:p-6 gap-5 md:h-full relative overflow-y-auto lg:overflow-hidden">
               {/* Left column: Video player and Profile details */}
               <div className={isCustomFullscreen ? "fixed inset-0 w-screen h-screen z-[150] bg-black flex flex-col justify-center items-center overflow-hidden" : "flex-1 flex flex-col gap-4 min-w-0"}>
                 <div className={isCustomFullscreen ? "relative w-full h-full max-h-screen bg-black flex items-center justify-center animate-fade-in" : "relative w-full aspect-video bg-black rounded-3xl overflow-hidden shadow-[0_20px_65px_rgba(0,0,0,0.85)] border border-white/10 dark:border-white/10 light:border-slate-200/80 w-full ring-1 ring-white/5"}>
                   <VideoPlayer 
-                    url={session.playbackUrl} 
+                    url={activeClassInfo.currentUrl} 
                     videoSourceType={session.videoSourceType || 'upload'}
-                    startTime={session.startTime} 
+                    startTime={new Date(activeClassInfo.targetStartTimeMs).toISOString()} 
                     watermarkText={registration.email} 
                     isCustomFullscreen={isCustomFullscreen}
                     onFullscreenToggle={() => setIsCustomFullscreen(!isCustomFullscreen)}

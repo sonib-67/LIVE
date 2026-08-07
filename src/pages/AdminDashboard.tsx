@@ -102,6 +102,7 @@ export default function AdminDashboard() {
     title: string;
     description: string;
     playbackUrl: string;
+    playbackUrls: string[];
     videoSourceType: 'upload' | 'embed' | 'hls';
     startTime: string;
     durationMinutes: number;
@@ -109,6 +110,7 @@ export default function AdminDashboard() {
     title: '',
     description: '',
     playbackUrl: '',
+    playbackUrls: [''],
     videoSourceType: 'upload',
     startTime: '',
     durationMinutes: 60,
@@ -443,7 +445,10 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (!newSession.playbackUrl.trim()) {
+    if (newSession.videoSourceType === 'hls' && (!newSession.playbackUrls || newSession.playbackUrls.length === 0 || !newSession.playbackUrls[0].trim())) {
+      setSubmitError('Please provide at least one valid HLS URL.');
+      return;
+    } else if (newSession.videoSourceType !== 'hls' && !newSession.playbackUrl.trim()) {
       setSubmitError('Please upload a valid training video first.');
       return;
     }
@@ -463,6 +468,8 @@ export default function AdminDashboard() {
     try {
       await sessionService.createSession({
         ...newSession,
+        playbackUrl: newSession.videoSourceType === 'hls' ? newSession.playbackUrls[0] : newSession.playbackUrl,
+        playbackUrls: newSession.videoSourceType === 'hls' ? newSession.playbackUrls.filter(u => u.trim() !== '') : [],
         startTimeMs: new Date(newSession.startTime).getTime(),
         adminId: user.uid,
         isActive: true,
@@ -477,7 +484,7 @@ export default function AdminDashboard() {
       });
       
       setSubmitSuccess(true);
-      setNewSession({ title: '', description: '', playbackUrl: '', startTime: '', durationMinutes: 60 });
+      setNewSession({ title: '', description: '', playbackUrl: '', playbackUrls: [''], videoSourceType: 'upload', startTime: '', durationMinutes: 60 });
       setNewHours(1);
       setNewMinutes(0);
       setNewSeconds(0);
@@ -508,7 +515,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await signOut(auth);
-    navigate('/admin/login/78794108');
+    navigate('/admin/login');
   };
 
   return (
@@ -632,7 +639,7 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={() => {
-                        navigate(`/admin/live/78794108/${selectedSession.id}`);
+                        navigate(`/admin/live/${selectedSession.id}`);
                       }}
                       className="p-2.5 bg-red-600/10 hover:bg-red-600 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] border border-red-500/30 rounded-xl text-red-400 hover:text-white transition-all shadow-md cursor-pointer text-xs sm:text-sm font-bold flex items-center gap-1.5 animate-pulse shrink-0"
                     >
@@ -923,16 +930,52 @@ export default function AdminDashboard() {
                 )}
 
                 {newSession.videoSourceType === 'hls' && (
-                  <div>
-                    <label className="block text-xs text-white/50 dark:text-white/50 light:text-slate-600 mb-1">HLS Playlist URL (.m3u8)</label>
-                    <input
-                      type="url"
-                      required
-                      value={newSession.playbackUrl}
-                      onChange={e => setNewSession({...newSession, playbackUrl: e.target.value})}
-                      placeholder="https://example.com/stream.m3u8"
-                      className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                    />
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs text-white/50 dark:text-white/50 light:text-slate-600">HLS Playlist URLs (.m3u8)</label>
+                      {newSession.playbackUrls.length < 5 && (
+                        <button
+                          type="button"
+                          onClick={() => setNewSession(prev => ({ ...prev, playbackUrls: [...prev.playbackUrls, ''] }))}
+                          className="text-xs text-indigo-400 hover:text-indigo-300 font-medium cursor-pointer flex items-center space-x-1"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Add Day {newSession.playbackUrls.length + 1}</span>
+                        </button>
+                      )}
+                    </div>
+                    {newSession.playbackUrls.map((url, idx) => (
+                      <div key={idx} className="flex items-center space-x-2">
+                        <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1}</div>
+                        <input
+                          type="url"
+                          required={idx === 0}
+                          value={url}
+                          onChange={e => {
+                            const newUrls = [...newSession.playbackUrls];
+                            newUrls[idx] = e.target.value;
+                            setNewSession({...newSession, playbackUrls: newUrls});
+                          }}
+                          placeholder="https://example.com/stream.m3u8"
+                          className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+                        />
+                        {newSession.playbackUrls.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newUrls = newSession.playbackUrls.filter((_, i) => i !== idx);
+                              setNewSession({...newSession, playbackUrls: newUrls});
+                            }}
+                            className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors cursor-pointer shrink-0"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <p className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-400 mt-1 leading-relaxed">
+                      Add up to 5 URLs for multi-day streaming. Day 1 starts at the selected Start Time. Subsequent days start at the exact same time on the following days automatically after midnight.
+                    </p>
                   </div>
                 )}
               </div>
