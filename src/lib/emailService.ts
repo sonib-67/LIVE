@@ -295,3 +295,64 @@ export async function sendRegistrationEmail(
     return false;
   }
 }
+
+export async function sendReminderEmail(
+  toEmail: string,
+  attendeeName: string,
+  accessId: string,
+  accessPass: string,
+  joinToken: string
+): Promise<boolean> {
+  const appBaseUrl = 'https://mushroomtraining.online';
+  const joinUrl = `${appBaseUrl}/join/${joinToken}`;
+  const subject = `Starting Soon: Your Organic Mushroom Farming Live Session`;
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Session Starting Soon</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .header { padding: 32px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .header h1 { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; }
+        .content { padding: 32px; }
+        .content p { font-size: 15px; line-height: 1.6; color: #334155; margin: 0 0 20px 0; }
+        .btn { display: block; text-align: center; background-color: #4f46e5; color: #ffffff; text-decoration: none; font-weight: 700; padding: 16px 24px; border-radius: 10px; margin: 24px 0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Organic Mushroom Farm</h1>
+        </div>
+        <div class="content">
+          <p>Hello <strong>${attendeeName}</strong>,</p>
+          <p>This is a quick reminder that your live broadcast session is starting in less than 1 hour!</p>
+          <p>Please use your access details below to join the room:</p>
+          <p><strong>Access ID:</strong> ${accessId}</p>
+          <p><strong>Verification Password:</strong> ${accessPass}</p>
+          <a href="${joinUrl}" class="btn">Click Here to Enter the Session</a>
+        </div>
+      </div>
+    </body>
+    </html>
+  `.trim();
+
+  try {
+    const mailOptions = {
+      from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
+      replyTo: 'no-reply@organicmushroomsfarm.com',
+      to: toEmail,
+      subject: subject,
+      html: htmlContent
+    };
+    const info = await getTransporter().sendMail(mailOptions);
+    return true;
+  } catch (err) {
+    console.error(`Failed to send reminder email to ${toEmail}:`, err);
+    return false;
+  }
+}

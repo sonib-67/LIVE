@@ -65,6 +65,56 @@ router.post('/send-registration-email', async (req, res) => {
   }
 });
 
-app.use('/api', router);
 
+
+router.get('/cron-reminders', async (req, res) => {
+  try {
+    const { sendReminderEmail } = await import('../src/lib/emailService.js');
+    const { db } = await import('../src/lib/firebase.js');
+    const { collection, getDocs, query, where, updateDoc, doc } = await import('firebase/firestore');
+
+    const sessionsRef = collection(db, 'sessions');
+    const now = Date.now();
+    const oneHourFromNow = now + (60 * 60 * 1000);
+    const fifteenMinsFromNow = now + (15 * 60 * 1000);
+
+    const snapshot = await getDocs(sessionsRef);
+    let sentCount = 0;
+
+    for (const sessionDoc of snapshot.docs) {
+      const session = sessionDoc.data();
+      const startTimeMs = session.startTimeMs || new Date(session.startTime).getTime();
+      
+      // Target sessions starting in the next 15 to 70 mins
+      if (startTimeMs > fifteenMinsFromNow && startTimeMs <= (oneHourFromNow + (10 * 60 * 1000))) {
+        
+        const regRef = collection(db, 'registrations');
+        const regQuery = query(regRef, where('sessionId', '==', sessionDoc.id));
+        const regSnapshot = await getDocs(regQuery);
+        
+        for (const rDoc of regSnapshot.docs) {
+          const reg = rDoc.data();
+          if (!reg.reminderSent) {
+            const success = await sendReminderEmail(
+              reg.email,
+              reg.name || 'Attendee',
+              reg.studentId || 'N/A',
+              reg.password || 'N/A',
+              reg.joinToken || ''
+            );
+            if (success) {
+              await updateDoc(doc(db, 'registrations', rDoc.id), { reminderSent: true });
+              sentCount++;
+            }
+          }
+        }
+      }
+    }
+    res.json({ success: true, sentCount });
+  } catch (e: any) {
+    console.error('Error in cron reminders:', e);
+    res.status(500).json({ error: 'Failed to process reminders', details: e.message });
+  }
+});
+-e app.use('/api', router);
 export default app;

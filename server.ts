@@ -71,7 +71,7 @@ async function startServer() {
   startSessionSimulators();
 
   // Start background automated registrars SMTP dispatchers
-  startRegistrationEmailListener();
+  // startRegistrationEmailListener();
 
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
