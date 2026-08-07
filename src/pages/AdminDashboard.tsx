@@ -276,7 +276,8 @@ export default function AdminDashboard() {
         startTime: editingSessionData.startTime,
         startTimeMs: new Date(editingSessionData.startTime).getTime(),
         durationMinutes: editingSessionData.durationMinutes,
-        playbackUrl: editingSessionData.playbackUrl,
+        playbackUrl: editingSessionData.videoSourceType === 'hls' ? editingSessionData.playbackUrls[0] : editingSessionData.playbackUrl,
+        playbackUrls: editingSessionData.videoSourceType === 'hls' ? editingSessionData.playbackUrls.filter(u => u.trim() !== '') : [],
         videoSourceType: editingSessionData.videoSourceType,
         chatEnabled: editChatEnabled,
         autoChatEnabled: editAutoChatEnabled,
@@ -652,6 +653,7 @@ export default function AdminDashboard() {
                           startTime: selectedSession.startTime,
                           durationMinutes: selectedSession.durationMinutes,
                           playbackUrl: selectedSession.playbackUrl,
+                          playbackUrls: selectedSession.playbackUrls && selectedSession.playbackUrls.length > 0 ? selectedSession.playbackUrls : [selectedSession.playbackUrl || ''],
                           videoSourceType: selectedSession.videoSourceType || 'upload'
                         });
                         setIsEditingSession(true);
@@ -1246,16 +1248,49 @@ export default function AdminDashboard() {
                 )}
 
                 {editingSessionData.videoSourceType === 'hls' && (
-                  <div>
-                    <label className="block text-xs text-white/50 dark:text-white/50 light:text-slate-600 mb-1">HLS Playlist URL (.m3u8)</label>
-                    <input
-                      type="url"
-                      required
-                      value={editingSessionData.playbackUrl}
-                      onChange={e => setEditingSessionData({...editingSessionData, playbackUrl: e.target.value})}
-                      placeholder="https://example.com/stream.m3u8"
-                      className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                    />
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm text-white/60 dark:text-white/60 light:text-slate-600">HLS Playlist URLs (.m3u8)</label>
+                      {editingSessionData.playbackUrls.length < 5 && (
+                        <button
+                          type="button"
+                          onClick={() => setEditingSessionData(prev => ({ ...prev, playbackUrls: [...prev.playbackUrls, ''] }))}
+                          className="text-xs text-indigo-400 hover:text-indigo-300 font-medium cursor-pointer flex items-center space-x-1"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Add Day {editingSessionData.playbackUrls.length + 1}</span>
+                        </button>
+                      )}
+                    </div>
+                    {editingSessionData.playbackUrls.map((url, idx) => (
+                      <div key={idx} className="flex items-center space-x-2">
+                        <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1}</div>
+                        <input
+                          type="url"
+                          required={idx === 0}
+                          value={url}
+                          onChange={e => {
+                            const newUrls = [...editingSessionData.playbackUrls];
+                            newUrls[idx] = e.target.value;
+                            setEditingSessionData({...editingSessionData, playbackUrls: newUrls});
+                          }}
+                          placeholder="https://example.com/stream.m3u8"
+                          className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+                        />
+                        {editingSessionData.playbackUrls.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newUrls = editingSessionData.playbackUrls.filter((_, i) => i !== idx);
+                              setEditingSessionData({...editingSessionData, playbackUrls: newUrls});
+                            }}
+                            className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors cursor-pointer shrink-0"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
