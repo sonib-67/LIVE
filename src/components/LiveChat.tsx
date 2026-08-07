@@ -433,7 +433,7 @@ export default function LiveChat({
   const containerClasses = `bg-black/40 border border-white/10 dark:bg-black/40 dark:border-white/10 light:bg-white light:border-slate-200 backdrop-blur-3xl rounded-3xl flex flex-col overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_15px_40px_rgba(0,0,0,0.6)] light:shadow-md border-t border-l border-white/10 border-r border-b border-[#000000]/50 transition-all duration-300 ${
     isCustomFullscreen 
       ? 'fixed right-6 top-1/2 -translate-y-1/2 z-[200] w-[320px] sm:w-[350px] h-[480px] max-h-[80vh]' 
-      : 'flex-1 lg:flex-none lg:w-[350px] h-[380px] sm:h-[420px]'
+      : 'sticky bottom-2 z-[100] flex-1 lg:static lg:flex-none lg:w-[350px] h-[320px] sm:h-[420px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] lg:shadow-md'
   }`;
 
   return (
@@ -474,7 +474,6 @@ export default function LiveChat({
         ref={containerRef}
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col scrollbar-width-thin scrollbar-thumb-white/10 overscroll-contain touch-pan-y [webkit-overflow-scrolling:touch]"
-        style={{ height: isCustomFullscreen ? '300px' : '280px' }}
       >
         {messages.map((msg) => (
           <div 
