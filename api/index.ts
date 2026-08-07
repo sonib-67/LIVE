@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import { sendRegistrationEmail } from '../src/lib/emailService';
 
 const app = express();
 app.use(express.json());
@@ -39,14 +38,17 @@ router.get('/apivideo-token', async (req, res) => {
     const tokenData = await tokenRes.json();
 
     res.json({ token: tokenData.token });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error getting api.video token:', error);
-    res.status(500).json({ error: 'Failed to get upload token' });
+    res.status(500).json({ error: 'Failed to get upload token', details: error.message });
   }
 });
 
 router.post('/send-registration-email', async (req, res) => {
   try {
+    // Dynamically import to prevent Vercel initialization crashes if module resolution fails
+    const { sendRegistrationEmail } = await import('../src/lib/emailService.js');
+    
     const data = req.body;
     const success = await sendRegistrationEmail(
       data.email,
@@ -57,9 +59,9 @@ router.post('/send-registration-email', async (req, res) => {
       'https://mushroomtraining.online'
     );
     res.json({ success });
-  } catch (e) {
+  } catch (e: any) {
     console.error('Error sending email via API:', e);
-    res.status(500).json({ error: 'Failed to send email' });
+    res.status(500).json({ error: 'Failed to send email', details: e.message, stack: e.stack });
   }
 });
 
