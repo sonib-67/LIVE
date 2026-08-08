@@ -9,6 +9,7 @@ export interface Session {
   startTime: string; // local ISO string
   startTimeMs?: number; // UTC timestamp resolving timezone bugs
   durationMinutes: number;
+  durationsMinutes?: number[];
   isActive: boolean;
   createdAt: string;
   

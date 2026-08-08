@@ -27,7 +27,10 @@ export function getActiveClassInfo(session: Session, currentNowMs?: number) {
   
   const targetStartTimeMs = targetStartTime.getTime();
   const currentUrl = urls[effectiveDayIndex];
-  const endMs = targetStartTimeMs + (session.durationMinutes || 60) * 60000;
+  const currentDurationMinutes = (session.durationsMinutes && session.durationsMinutes[effectiveDayIndex] !== undefined) 
+    ? session.durationsMinutes[effectiveDayIndex] 
+    : (session.durationMinutes || 60);
+  const endMs = targetStartTimeMs + currentDurationMinutes * 60000;
   
   let isEnded = false;
   let isTodayCompleted = false;

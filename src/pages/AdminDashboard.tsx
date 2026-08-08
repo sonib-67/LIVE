@@ -106,6 +106,7 @@ export default function AdminDashboard() {
     videoSourceType: 'upload' | 'embed' | 'hls';
     startTime: string;
     durationMinutes: number;
+    durationsMinutes?: number[];
   }>({
     title: '',
     description: '',
@@ -126,6 +127,8 @@ export default function AdminDashboard() {
     durationMinutes: number;
     playbackUrl: string;
     videoSourceType: 'upload' | 'embed' | 'hls';
+    playbackUrls: string[];
+    durationsMinutes?: number[];
   }>({
     startTime: '',
     durationMinutes: 60,
@@ -278,6 +281,7 @@ export default function AdminDashboard() {
         durationMinutes: editingSessionData.durationMinutes,
         playbackUrl: editingSessionData.videoSourceType === 'hls' ? editingSessionData.playbackUrls[0] : editingSessionData.playbackUrl,
         playbackUrls: editingSessionData.videoSourceType === 'hls' ? editingSessionData.playbackUrls.filter(u => u.trim() !== '') : [],
+      durationsMinutes: editingSessionData.videoSourceType === 'hls' ? (editingSessionData.durationsMinutes || []).filter((_, i) => editingSessionData.playbackUrls[i].trim() !== '') : [],
         videoSourceType: editingSessionData.videoSourceType,
         chatEnabled: editChatEnabled,
         autoChatEnabled: editAutoChatEnabled,
@@ -471,6 +475,7 @@ export default function AdminDashboard() {
         ...newSession,
         playbackUrl: newSession.videoSourceType === 'hls' ? newSession.playbackUrls[0] : newSession.playbackUrl,
         playbackUrls: newSession.videoSourceType === 'hls' ? newSession.playbackUrls.filter(u => u.trim() !== '') : [],
+        durationsMinutes: newSession.videoSourceType === 'hls' ? newSession.durationsMinutes.filter((_, i) => newSession.playbackUrls[i].trim() !== '') : [],
         startTimeMs: new Date(newSession.startTime).getTime(),
         adminId: user.uid,
         isActive: true,
@@ -485,7 +490,7 @@ export default function AdminDashboard() {
       });
       
       setSubmitSuccess(true);
-      setNewSession({ title: '', description: '', playbackUrl: '', playbackUrls: [''], videoSourceType: 'upload', startTime: '', durationMinutes: 60 });
+      setNewSession({ title: '', description: '', playbackUrl: '', playbackUrls: [''], videoSourceType: 'upload', startTime: '', durationMinutes: 60, durationsMinutes: [60] });
       setNewHours(1);
       setNewMinutes(0);
       setNewSeconds(0);
@@ -654,6 +659,7 @@ export default function AdminDashboard() {
                           durationMinutes: selectedSession.durationMinutes,
                           playbackUrl: selectedSession.playbackUrl,
                           playbackUrls: selectedSession.playbackUrls && selectedSession.playbackUrls.length > 0 ? selectedSession.playbackUrls : [selectedSession.playbackUrl || ''],
+                          durationsMinutes: selectedSession.durationsMinutes && selectedSession.durationsMinutes.length > 0 ? selectedSession.durationsMinutes : [selectedSession.durationMinutes || 60],
                           videoSourceType: selectedSession.videoSourceType || 'upload'
                         });
                         setIsEditingSession(true);
@@ -938,7 +944,7 @@ export default function AdminDashboard() {
                       {newSession.playbackUrls.length < 5 && (
                         <button
                           type="button"
-                          onClick={() => setNewSession(prev => ({ ...prev, playbackUrls: [...prev.playbackUrls, ''] }))}
+                          onClick={() => setNewSession(prev => ({ ...prev, playbackUrls: [...prev.playbackUrls, ''], durationsMinutes: [...(prev.durationsMinutes || prev.playbackUrls.map(() => 60)), 60] }))}
                           className="text-xs text-indigo-400 hover:text-indigo-300 font-medium cursor-pointer flex items-center space-x-1"
                         >
                           <Plus className="w-3 h-3" />
@@ -947,32 +953,69 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     {newSession.playbackUrls.map((url, idx) => (
-                      <div key={idx} className="flex items-center space-x-2">
-                        <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1}</div>
-                        <input
-                          type="url"
-                          required={idx === 0}
-                          value={url}
-                          onChange={e => {
-                            const newUrls = [...newSession.playbackUrls];
-                            newUrls[idx] = e.target.value;
-                            setNewSession({...newSession, playbackUrls: newUrls});
-                          }}
-                          placeholder="https://example.com/stream.m3u8"
-                          className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                        />
-                        {newSession.playbackUrls.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newUrls = newSession.playbackUrls.filter((_, i) => i !== idx);
+                      <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 rounded-xl">
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
+                          <input
+                            type="url"
+                            required={idx === 0}
+                            value={url}
+                            onChange={e => {
+                              const newUrls = [...newSession.playbackUrls];
+                              newUrls[idx] = e.target.value;
                               setNewSession({...newSession, playbackUrls: newUrls});
                             }}
-                            className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors cursor-pointer shrink-0"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+                            placeholder="https://example.com/stream.m3u8"
+                            className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+                          />
+                          {newSession.playbackUrls.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newUrls = newSession.playbackUrls.filter((_, i) => i !== idx);
+                                const newDurs = (newSession.durationsMinutes || []).filter((_, i) => i !== idx);
+                                setNewSession({...newSession, playbackUrls: newUrls, durationsMinutes: newDurs});
+                              }}
+                              className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors cursor-pointer shrink-0"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2 pl-[74px]">
+                           <div className="flex items-center space-x-2">
+                             <input 
+                               type="number"
+                               min="0"
+                               className="w-16 bg-black/50 border border-white/10 rounded-lg px-2 py-1.5 text-center text-sm focus:outline-none focus:border-purple-500"
+                               value={Math.floor((newSession.durationsMinutes?.[idx] || 60) / 60)}
+                               onChange={e => {
+                                 const val = Math.max(0, parseInt(e.target.value) || 0);
+                                 const newDurs = [...(newSession.durationsMinutes || newSession.playbackUrls.map(() => 60))];
+                                 const currentMins = (newDurs[idx] || 60) % 60;
+                                 newDurs[idx] = val * 60 + currentMins;
+                                 setNewSession({...newSession, durationsMinutes: newDurs});
+                               }}
+                             />
+                             <span className="text-xs text-white/40">hrs</span>
+                             
+                             <input 
+                               type="number"
+                               min="0"
+                               max="59"
+                               className="w-16 bg-black/50 border border-white/10 rounded-lg px-2 py-1.5 text-center text-sm focus:outline-none focus:border-purple-500"
+                               value={(newSession.durationsMinutes?.[idx] || 60) % 60}
+                               onChange={e => {
+                                 const val = Math.max(0, parseInt(e.target.value) || 0);
+                                 const newDurs = [...(newSession.durationsMinutes || newSession.playbackUrls.map(() => 60))];
+                                 const currentHrs = Math.floor((newDurs[idx] || 60) / 60);
+                                 newDurs[idx] = currentHrs * 60 + val;
+                                 setNewSession({...newSession, durationsMinutes: newDurs});
+                               }}
+                             />
+                             <span className="text-xs text-white/40">min</span>
+                           </div>
+                        </div>
                       </div>
                     ))}
                     <p className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-400 mt-1 leading-relaxed">
@@ -992,7 +1035,7 @@ export default function AdminDashboard() {
                 </div>
                 
                 {/* Hours, Minutes, Seconds Picker for CREATE */}
-                <div className="md:col-span-5 lg:col-span-5">
+                {newSession.videoSourceType !== 'hls' && (<div className="md:col-span-5 lg:col-span-5">
                   <label className="block text-sm text-white/60 dark:text-white/60 light:text-slate-600 mb-1">Duration</label>
                   <div className="grid grid-cols-3 gap-2">
                     <div>
@@ -1032,7 +1075,7 @@ export default function AdminDashboard() {
                   <div className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 mt-1.5 text-right font-mono">
                     ({newSession.durationMinutes.toFixed(2)} mins)
                   </div>
-                </div>
+                </div>)}
               </div>
 
               {/* Live Assistant & Broadcaster Targets Configuration */}
@@ -1254,7 +1297,7 @@ export default function AdminDashboard() {
                       {editingSessionData.playbackUrls.length < 5 && (
                         <button
                           type="button"
-                          onClick={() => setEditingSessionData(prev => ({ ...prev, playbackUrls: [...prev.playbackUrls, ''] }))}
+                          onClick={() => setEditingSessionData(prev => ({ ...prev, playbackUrls: [...prev.playbackUrls, ''], durationsMinutes: [...(prev.durationsMinutes || prev.playbackUrls.map(() => 60)), 60] }))}
                           className="text-xs text-indigo-400 hover:text-indigo-300 font-medium cursor-pointer flex items-center space-x-1"
                         >
                           <Plus className="w-3 h-3" />
@@ -1263,32 +1306,69 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     {editingSessionData.playbackUrls.map((url, idx) => (
-                      <div key={idx} className="flex items-center space-x-2">
-                        <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1}</div>
-                        <input
-                          type="url"
-                          required={idx === 0}
-                          value={url}
-                          onChange={e => {
-                            const newUrls = [...editingSessionData.playbackUrls];
-                            newUrls[idx] = e.target.value;
-                            setEditingSessionData({...editingSessionData, playbackUrls: newUrls});
-                          }}
-                          placeholder="https://example.com/stream.m3u8"
-                          className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                        />
-                        {editingSessionData.playbackUrls.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newUrls = editingSessionData.playbackUrls.filter((_, i) => i !== idx);
+                      <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 rounded-xl">
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
+                          <input
+                            type="url"
+                            required={idx === 0}
+                            value={url}
+                            onChange={e => {
+                              const newUrls = [...editingSessionData.playbackUrls];
+                              newUrls[idx] = e.target.value;
                               setEditingSessionData({...editingSessionData, playbackUrls: newUrls});
                             }}
-                            className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors cursor-pointer shrink-0"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+                            placeholder="https://example.com/stream.m3u8"
+                            className="w-full bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-slate-50 light:border-slate-300 light:text-slate-950 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors text-sm"
+                          />
+                          {editingSessionData.playbackUrls.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newUrls = editingSessionData.playbackUrls.filter((_, i) => i !== idx);
+                                const newDurs = (editingSessionData.durationsMinutes || []).filter((_, i) => i !== idx);
+                                setEditingSessionData({...editingSessionData, playbackUrls: newUrls, durationsMinutes: newDurs});
+                              }}
+                              className="p-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors cursor-pointer shrink-0"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2 pl-[74px]">
+                           <div className="flex items-center space-x-2">
+                             <input 
+                               type="number"
+                               min="0"
+                               className="w-16 bg-black/50 border border-white/10 rounded-lg px-2 py-1.5 text-center text-sm focus:outline-none focus:border-purple-500"
+                               value={Math.floor((editingSessionData.durationsMinutes?.[idx] || 60) / 60)}
+                               onChange={e => {
+                                 const val = Math.max(0, parseInt(e.target.value) || 0);
+                                 const newDurs = [...(editingSessionData.durationsMinutes || editingSessionData.playbackUrls.map(() => 60))];
+                                 const currentMins = (newDurs[idx] || 60) % 60;
+                                 newDurs[idx] = val * 60 + currentMins;
+                                 setEditingSessionData({...editingSessionData, durationsMinutes: newDurs});
+                               }}
+                             />
+                             <span className="text-xs text-white/40">hrs</span>
+                             
+                             <input 
+                               type="number"
+                               min="0"
+                               max="59"
+                               className="w-16 bg-black/50 border border-white/10 rounded-lg px-2 py-1.5 text-center text-sm focus:outline-none focus:border-purple-500"
+                               value={(editingSessionData.durationsMinutes?.[idx] || 60) % 60}
+                               onChange={e => {
+                                 const val = Math.max(0, parseInt(e.target.value) || 0);
+                                 const newDurs = [...(editingSessionData.durationsMinutes || editingSessionData.playbackUrls.map(() => 60))];
+                                 const currentHrs = Math.floor((newDurs[idx] || 60) / 60);
+                                 newDurs[idx] = currentHrs * 60 + val;
+                                 setEditingSessionData({...editingSessionData, durationsMinutes: newDurs});
+                               }}
+                             />
+                             <span className="text-xs text-white/40">min</span>
+                           </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1305,7 +1385,7 @@ export default function AdminDashboard() {
                 </div>
                 
                 {/* Hours, Minutes, Seconds Picker for EDIT */}
-                <div className="md:col-span-5 lg:col-span-5">
+                {editingSessionData.videoSourceType !== 'hls' && (<div className="md:col-span-5 lg:col-span-5">
                   <label className="block text-sm text-white/60 dark:text-white/60 light:text-slate-600 mb-1">Duration</label>
                   <div className="grid grid-cols-3 gap-2">
                     <div>
@@ -1345,7 +1425,7 @@ export default function AdminDashboard() {
                   <div className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 mt-1.5 text-right font-mono">
                     ({editingSessionData.durationMinutes.toFixed(2)} mins)
                   </div>
-                </div>
+                </div>)}
               </div>
 
               {/* Edit Engagement configurations */}
