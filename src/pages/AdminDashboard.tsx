@@ -953,9 +953,9 @@ export default function AdminDashboard() {
                       )}
                     </div>
 {newSession.playbackUrls.map((url, idx) => (
-                      <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 rounded-xl">
+                      <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 dark:bg-black/20 dark:border-white/5 light:bg-slate-100 light:border-slate-200 rounded-xl">
                         <div className="flex items-center space-x-2">
-                          <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
+                          <div className="bg-indigo-500/20 text-indigo-400 dark:bg-indigo-500/20 dark:text-indigo-400 light:bg-indigo-100 light:text-indigo-700 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
                           <input
                             type="url"
                             required={idx === 0}
@@ -987,7 +987,7 @@ export default function AdminDashboard() {
                              <input 
                                type="number"
                                min="0"
-                               className="w-12 sm:w-16 bg-black/50 border border-white/10 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500"
+                               className="w-12 sm:w-16 bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-white light:border-slate-300 light:text-slate-900 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500 font-mono"
                                value={Math.floor((newSession.durationsMinutes?.[idx] || 60) / 60)}
                                onChange={e => {
                                  const val = Math.max(0, parseInt(e.target.value) || 0);
@@ -999,13 +999,13 @@ export default function AdminDashboard() {
                                  setNewSession({...newSession, durationsMinutes: newDurs});
                                }}
                              />
-                             <span className="text-[10px] text-white/40">h</span>
+                             <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 font-bold">h</span>
                              
                              <input 
                                type="number"
                                min="0"
                                max="59"
-                               className="w-12 sm:w-16 bg-black/50 border border-white/10 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500"
+                               className="w-12 sm:w-16 bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-white light:border-slate-300 light:text-slate-900 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500 font-mono"
                                value={Math.floor((newSession.durationsMinutes?.[idx] || 60) % 60)}
                                onChange={e => {
                                  const val = Math.min(59, Math.max(0, parseInt(e.target.value) || 0));
@@ -1017,13 +1017,13 @@ export default function AdminDashboard() {
                                  setNewSession({...newSession, durationsMinutes: newDurs});
                                }}
                              />
-                             <span className="text-[10px] text-white/40">m</span>
+                             <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 font-bold">m</span>
 
                              <input 
                                type="number"
                                min="0"
                                max="59"
-                               className="w-12 sm:w-16 bg-black/50 border border-white/10 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500"
+                               className="w-12 sm:w-16 bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-white light:border-slate-300 light:text-slate-900 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500 font-mono"
                                value={Math.round(((newSession.durationsMinutes?.[idx] || 60) * 60) % 60)}
                                onChange={e => {
                                  const val = Math.min(59, Math.max(0, parseInt(e.target.value) || 0));
@@ -1035,7 +1035,7 @@ export default function AdminDashboard() {
                                  setNewSession({...newSession, durationsMinutes: newDurs});
                                }}
                              />
-                             <span className="text-[10px] text-white/40">s</span>
+                             <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 font-bold">s</span>
                            </div>
                         </div>
                       </div>
@@ -1327,9 +1327,9 @@ export default function AdminDashboard() {
                       )}
                     </div>
 {editingSessionData.playbackUrls.map((url, idx) => (
-                      <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 rounded-xl">
+                      <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 dark:bg-black/20 dark:border-white/5 light:bg-slate-100 light:border-slate-200 rounded-xl">
                         <div className="flex items-center space-x-2">
-                          <div className="bg-indigo-500/20 text-indigo-400 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
+                          <div className="bg-indigo-500/20 text-indigo-400 dark:bg-indigo-500/20 dark:text-indigo-400 light:bg-indigo-100 light:text-indigo-700 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
                           <input
                             type="url"
                             required={idx === 0}
@@ -1361,7 +1361,7 @@ export default function AdminDashboard() {
                              <input 
                                type="number"
                                min="0"
-                               className="w-12 sm:w-16 bg-black/50 border border-white/10 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500"
+                               className="w-12 sm:w-16 bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-white light:border-slate-300 light:text-slate-900 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500 font-mono"
                                value={Math.floor((editingSessionData.durationsMinutes?.[idx] || 60) / 60)}
                                onChange={e => {
                                  const val = Math.max(0, parseInt(e.target.value) || 0);
@@ -1373,13 +1373,13 @@ export default function AdminDashboard() {
                                  setEditingSessionData({...editingSessionData, durationsMinutes: newDurs});
                                }}
                              />
-                             <span className="text-[10px] text-white/40">h</span>
+                             <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 font-bold">h</span>
                              
                              <input 
                                type="number"
                                min="0"
                                max="59"
-                               className="w-12 sm:w-16 bg-black/50 border border-white/10 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500"
+                               className="w-12 sm:w-16 bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-white light:border-slate-300 light:text-slate-900 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500 font-mono"
                                value={Math.floor((editingSessionData.durationsMinutes?.[idx] || 60) % 60)}
                                onChange={e => {
                                  const val = Math.min(59, Math.max(0, parseInt(e.target.value) || 0));
@@ -1391,13 +1391,13 @@ export default function AdminDashboard() {
                                  setEditingSessionData({...editingSessionData, durationsMinutes: newDurs});
                                }}
                              />
-                             <span className="text-[10px] text-white/40">m</span>
+                             <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 font-bold">m</span>
 
                              <input 
                                type="number"
                                min="0"
                                max="59"
-                               className="w-12 sm:w-16 bg-black/50 border border-white/10 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500"
+                               className="w-12 sm:w-16 bg-black/50 border border-white/10 dark:bg-black/50 dark:border-white/10 light:bg-white light:border-slate-300 light:text-slate-900 rounded-lg px-1.5 py-1 text-center text-sm focus:outline-none focus:border-purple-500 font-mono"
                                value={Math.round(((editingSessionData.durationsMinutes?.[idx] || 60) * 60) % 60)}
                                onChange={e => {
                                  const val = Math.min(59, Math.max(0, parseInt(e.target.value) || 0));
@@ -1409,7 +1409,7 @@ export default function AdminDashboard() {
                                  setEditingSessionData({...editingSessionData, durationsMinutes: newDurs});
                                }}
                              />
-                             <span className="text-[10px] text-white/40">s</span>
+                             <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-500 font-bold">s</span>
                            </div>
                         </div>
                       </div>
