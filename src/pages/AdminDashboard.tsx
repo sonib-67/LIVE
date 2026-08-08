@@ -282,6 +282,7 @@ export default function AdminDashboard() {
         playbackUrl: editingSessionData.videoSourceType === 'hls' ? editingSessionData.playbackUrls[0] : editingSessionData.playbackUrl,
         playbackUrls: editingSessionData.videoSourceType === 'hls' ? editingSessionData.playbackUrls.filter(u => u.trim() !== '') : [],
       durationsMinutes: editingSessionData.videoSourceType === 'hls' ? (editingSessionData.durationsMinutes || []).filter((_, i) => editingSessionData.playbackUrls[i].trim() !== '') : [],
+        dayTitles: editingSessionData.videoSourceType === 'hls' ? (editingSessionData.dayTitles || editingSessionData.playbackUrls.map((_,i)=>`Day ${i+1}`)).filter((_, i) => editingSessionData.playbackUrls[i].trim() !== '') : [],
         videoSourceType: editingSessionData.videoSourceType,
         chatEnabled: editChatEnabled,
         autoChatEnabled: editAutoChatEnabled,
@@ -476,6 +477,7 @@ export default function AdminDashboard() {
         playbackUrl: newSession.videoSourceType === 'hls' ? newSession.playbackUrls[0] : newSession.playbackUrl,
         playbackUrls: newSession.videoSourceType === 'hls' ? newSession.playbackUrls.filter(u => u.trim() !== '') : [],
         durationsMinutes: newSession.videoSourceType === 'hls' ? newSession.durationsMinutes.filter((_, i) => newSession.playbackUrls[i].trim() !== '') : [],
+        dayTitles: newSession.videoSourceType === 'hls' ? (newSession.dayTitles || newSession.playbackUrls.map((_, i) => `Day ${i + 1}`)).filter((_, i) => newSession.playbackUrls[i].trim() !== '') : [],
         startTimeMs: new Date(newSession.startTime).getTime(),
         adminId: user.uid,
         isActive: true,
@@ -660,6 +662,7 @@ export default function AdminDashboard() {
                           playbackUrl: selectedSession.playbackUrl,
                           playbackUrls: selectedSession.playbackUrls && selectedSession.playbackUrls.length > 0 ? selectedSession.playbackUrls : [selectedSession.playbackUrl || ''],
                           durationsMinutes: selectedSession.durationsMinutes && selectedSession.durationsMinutes.length > 0 ? selectedSession.durationsMinutes : [selectedSession.durationMinutes || 60],
+                          dayTitles: selectedSession.dayTitles && selectedSession.dayTitles.length > 0 ? selectedSession.dayTitles : ['Day 1'],
                           videoSourceType: selectedSession.videoSourceType || 'upload'
                         });
                         setIsEditingSession(true);
@@ -955,7 +958,17 @@ export default function AdminDashboard() {
 {newSession.playbackUrls.map((url, idx) => (
                       <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 dark:bg-black/20 dark:border-white/5 light:bg-slate-100 light:border-slate-200 rounded-xl">
                         <div className="flex items-center space-x-2">
-                          <div className="bg-indigo-500/20 text-indigo-400 dark:bg-indigo-500/20 dark:text-indigo-400 light:bg-indigo-100 light:text-indigo-700 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
+                          <input
+      type="text"
+      value={newSession.dayTitles?.[idx] || ''}
+      onChange={e => {
+        const newTitles = [...(newSession.dayTitles || newSession.playbackUrls.map((_, i) => 'Day ' + (i + 1)))];
+        newTitles[idx] = e.target.value;
+        setNewSession({ ...newSession, dayTitles: newTitles });
+      }}
+      placeholder={`Day ${idx + 1}`}
+      className="w-20 xs:w-24 bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 dark:bg-indigo-500/20 dark:border-indigo-500/30 dark:text-indigo-400 light:bg-indigo-100 light:border-indigo-200 light:text-indigo-700 text-[10px] xs:text-xs font-bold px-1.5 xs:px-2 py-1.5 rounded-lg shrink-0 focus:outline-none focus:border-indigo-400 placeholder-indigo-400/50"
+    />
                           <input
                             type="url"
                             required={idx === 0}
@@ -1329,7 +1342,17 @@ export default function AdminDashboard() {
 {editingSessionData.playbackUrls.map((url, idx) => (
                       <div key={idx} className="flex flex-col space-y-2 mb-2 p-3 bg-black/20 border border-white/5 dark:bg-black/20 dark:border-white/5 light:bg-slate-100 light:border-slate-200 rounded-xl">
                         <div className="flex items-center space-x-2">
-                          <div className="bg-indigo-500/20 text-indigo-400 dark:bg-indigo-500/20 dark:text-indigo-400 light:bg-indigo-100 light:text-indigo-700 text-xs font-bold px-2 py-1.5 rounded-lg shrink-0">Day {idx + 1} URL</div>
+                          <input
+      type="text"
+      value={editingSessionData.dayTitles?.[idx] || ''}
+      onChange={e => {
+        const newTitles = [...(editingSessionData.dayTitles || editingSessionData.playbackUrls.map((_, i) => 'Day ' + (i + 1)))];
+        newTitles[idx] = e.target.value;
+        setEditingSessionData({ ...editingSessionData, dayTitles: newTitles });
+      }}
+      placeholder={`Day ${idx + 1}`}
+      className="w-20 xs:w-24 bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 dark:bg-indigo-500/20 dark:border-indigo-500/30 dark:text-indigo-400 light:bg-indigo-100 light:border-indigo-200 light:text-indigo-700 text-[10px] xs:text-xs font-bold px-1.5 xs:px-2 py-1.5 rounded-lg shrink-0 focus:outline-none focus:border-indigo-400 placeholder-indigo-400/50"
+    />
                           <input
                             type="url"
                             required={idx === 0}

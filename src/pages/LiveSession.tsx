@@ -661,7 +661,7 @@ export default function LiveSession() {
                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                  <ThumbsUp className="w-8 h-8 text-green-400" />
                </div>
-               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Day {activeClassInfo.dayIndex + 1} Training Complete!</h2>
+               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">{activeClassInfo.dayTitle} Training Complete!</h2>
                <p className="text-slate-300 text-base mb-6">Great job completing today's session. The countdown for the next session will automatically start at midnight.</p>
                <p className="text-sm font-medium tracking-wide text-indigo-400 uppercase">See you tomorrow!</p>
              </div>
@@ -710,7 +710,7 @@ export default function LiveSession() {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[10px] text-white/40 dark:text-white/40 light:text-slate-400 uppercase tracking-widest font-bold mb-0.5 font-sans">Session Info</span>
-                      <span className="font-extrabold text-amber-400 dark:text-amber-400 light:text-amber-600 tracking-wide text-xs sm:text-sm flex items-center gap-1"><Play className="w-3.5 h-3.5" /> Day {activeClassInfo.dayIndex + 1} Training</span>
+                      <span className="font-extrabold text-amber-400 dark:text-amber-400 light:text-amber-600 tracking-wide text-xs sm:text-sm flex items-center gap-1"><Play className="w-3.5 h-3.5" /> {activeClassInfo.dayTitle} Training</span>
                     </div>
                     <div className="flex flex-col border-l border-white/10 pl-4 py-0.5">
                       <span className="text-[10px] text-[#a8b8d0] uppercase tracking-widest font-bold mb-0.5 font-sans flex items-center gap-1">Support Help Desk</span>

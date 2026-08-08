@@ -27,6 +27,9 @@ export function getActiveClassInfo(session: Session, currentNowMs?: number) {
   
   const targetStartTimeMs = targetStartTime.getTime();
   const currentUrl = urls[effectiveDayIndex];
+  const dayTitle = (session.dayTitles && session.dayTitles[effectiveDayIndex]) 
+    ? session.dayTitles[effectiveDayIndex] 
+    : `Day ${effectiveDayIndex + 1}`;
   const currentDurationMinutes = (session.durationsMinutes && session.durationsMinutes[effectiveDayIndex] !== undefined) 
     ? session.durationsMinutes[effectiveDayIndex] 
     : (session.durationMinutes || 60);
@@ -51,7 +54,8 @@ export function getActiveClassInfo(session: Session, currentNowMs?: number) {
   }
 
   return { 
-    dayIndex: effectiveDayIndex, 
+    dayIndex: effectiveDayIndex,
+    dayTitle, 
     targetStartTimeMs, 
     currentUrl, 
     totalDays: urls.length,
