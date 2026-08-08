@@ -295,3 +295,77 @@ export async function sendRegistrationEmail(
     return false;
   }
 }
+
+export async function sendCompletionEmail(toEmail: string, attendeeName: string, attendeeMobile: string, sessionTitle: string, certificateDataUrl: string) {
+  try {
+    const t = getTransporter();
+    
+    let attachments = [];
+    if (certificateDataUrl && certificateDataUrl.startsWith('data:image')) {
+      const base64Data = certificateDataUrl.split(',')[1];
+      attachments.push({
+        filename: `Certificate_${attendeeName.replace(/\s+/g, '_')}.png`,
+        content: base64Data,
+        encoding: 'base64'
+      });
+    }
+
+    const htmlBody = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Training Completed</title>
+      <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 20px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; }
+        .content { padding: 40px 30px; color: #3f3f46; line-height: 1.6; }
+        .content p { margin: 0 0 20px 0; font-size: 16px; }
+        .details-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0; }
+        .details-box p { margin: 0 0 10px 0; font-size: 15px; }
+        .details-box p:last-child { margin: 0; }
+        .details-box strong { color: #0f172a; }
+        .footer { background-color: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 14px; border-top: 1px solid #e2e8f0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Congratulations! 🎉</h1>
+        </div>
+        <div class="content">
+          <p>Hi <strong>${attendeeName}</strong>,</p>
+          <p>We are thrilled to inform you that you have successfully completed the <strong>${sessionTitle || 'Mushroom Farming'}</strong> training!</p>
+          <p>Your dedication and commitment to sustainable farming practices reflect excellence.</p>
+          <div class="details-box">
+            <p><strong>Name:</strong> ${attendeeName}</p>
+            <p><strong>Email:</strong> ${toEmail}</p>
+            <p><strong>Phone:</strong> ${attendeeMobile || 'N/A'}</p>
+          </div>
+          <p>Attached to this email is your official certificate of completion. You can also download it directly from the training portal.</p>
+          <p>We wish you the best in your mushroom farming journey!</p>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} ${SMTP_FROM_NAME}. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+    `;
+
+    await t.sendMail({
+      from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
+      to: toEmail,
+      subject: `Congratulations! You've Completed the ${sessionTitle || 'Training'}`,
+      html: htmlBody,
+      attachments
+    });
+    
+    console.log(`Completion email sent to ${toEmail}`);
+  } catch (err) {
+    console.error(`Failed to send completion email to ${toEmail}:`, err);
+  }
+}

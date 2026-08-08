@@ -1,5 +1,5 @@
 import express from 'express';
-import { sendRegistrationEmail } from '../lib/emailService.js';
+import { sendRegistrationEmail, sendCompletionEmail } from '../lib/emailService.js';
 
 const router = express.Router();
 
@@ -59,3 +59,19 @@ router.post('/send-registration-email', async (req, res) => {
 });
 
 export default router;
+
+router.post('/send-completion-email', async (req, res) => {
+  try {
+    const { toEmail, attendeeName, attendeeMobile, sessionTitle, certificateDataUrl } = req.body;
+    
+    if (!toEmail || !attendeeName) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    await sendCompletionEmail(toEmail, attendeeName, attendeeMobile, sessionTitle, certificateDataUrl);
+    res.json({ success: true, message: 'Completion email sent successfully' });
+  } catch (error) {
+    console.error('Failed to send completion email:', error);
+    res.status(500).json({ error: 'Failed to send completion email' });
+  }
+});
