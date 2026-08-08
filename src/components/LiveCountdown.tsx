@@ -78,7 +78,7 @@ export default function LiveCountdown({ targetTime, attendeeName, onZero }: Live
            <span className="text-xs font-semibold tracking-widest text-[#a8b8d0] dark:text-[#a8b8d0] light:text-[#4f5b70] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] light:drop-shadow-none">LIVE STARTS IN...</span>
         </div>
 
-        <div className="flex justify-center gap-2 xs:gap-3 sm:gap-6 lg:gap-8 mb-10 sm:mb-16 w-full px-2">
+        <div className="flex justify-center gap-1.5 xs:gap-3 sm:gap-6 lg:gap-8 mb-10 sm:mb-16 w-full px-1 sm:px-2">
           <TimeUnit value={timeLeft.d} label="Days" />
           <TimeUnit value={timeLeft.h} label="Hours" />
           <TimeUnit value={timeLeft.m} label="Minutes" />
@@ -100,7 +100,7 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
 
   return (
     <div className="flex flex-col items-center select-none flex-1 max-w-[112px]">
-      <div className="relative w-full aspect-[4/5] xs:aspect-auto xs:w-16 xs:h-24 sm:w-28 sm:h-36 bg-neutral-900 border border-white/10 dark:bg-neutral-900 dark:border-white/10 light:bg-white light:border-gray-200 rounded-xl xs:rounded-2xl flex items-center justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_8px_32px_rgba(0,0,0,0.5)] light:shadow-[0_8px_20px_rgba(0,0,0,0.06)] overflow-hidden">
+      <div className="relative w-full aspect-[4/5] xs:aspect-auto xs:w-14 xs:h-20 sm:w-28 sm:h-36 bg-neutral-900 border border-white/10 dark:bg-neutral-900 dark:border-white/10 light:bg-white light:border-gray-200 rounded-xl xs:rounded-2xl flex items-center justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_8px_32px_rgba(0,0,0,0.5)] light:shadow-[0_8px_20px_rgba(0,0,0,0.06)] overflow-hidden">
         {/* Neon Top Highlight */}
         <div className="absolute top-0 inset-x-4 h-[1px] bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent dark:via-indigo-400/50 light:via-indigo-500/30" />
         
@@ -111,7 +111,7 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
              animate={{ opacity: 1, y: 0, rotateX: 0 }}
              exit={{ opacity: 0, y: -15, rotateX: 45 }}
              transition={{ duration: 0.4, type: 'spring', bounce: 0 }}
-             className="text-2xl xs:text-3xl sm:text-6xl font-mono font-bold text-white dark:text-white light:text-slate-900 tracking-tighter"
+             className="text-xl xs:text-2xl sm:text-6xl font-mono font-bold text-white dark:text-white light:text-slate-900 tracking-tighter"
              style={{ transformStyle: 'preserve-3d' }}
            >
              {displayValue}
