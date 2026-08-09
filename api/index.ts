@@ -1,10 +1,11 @@
-import { sendRegistrationEmail, sendCompletionEmail } from '../src/lib/emailService';
+import { sendRegistrationEmail } from '../src/lib/emailService';
 import express from 'express';
 import cors from 'cors';
 
 const app = express();
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json());
 app.use(cors());
+
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -18,6 +19,7 @@ router.get('/time', (req, res) => {
 router.get('/apivideo-token', async (req, res) => {
   try {
     const apiKey = process.env.APIVIDEO_API_KEY || 'whQUXM00kPMcMAM7tAfLsJfR6LfOTSRD2hQFWclxuUY';
+
     const authRes = await fetch('https://sandbox.api.video/auth/api-key', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -25,7 +27,7 @@ router.get('/apivideo-token', async (req, res) => {
     });
     const authData = await authRes.json();
     if (!authData.access_token) throw new Error('Auth failed');
-    
+
     const tokenRes = await fetch('https://sandbox.api.video/upload-tokens', {
       method: 'POST',
       headers: {
@@ -35,6 +37,7 @@ router.get('/apivideo-token', async (req, res) => {
       body: JSON.stringify({ ttl: 3600 })
     });
     const tokenData = await tokenRes.json();
+
     res.json({ token: tokenData.token });
   } catch (error: any) {
     console.error('Error getting api.video token:', error);
@@ -44,6 +47,7 @@ router.get('/apivideo-token', async (req, res) => {
 
 router.post('/send-registration-email', async (req, res) => {
   try {
+
     const data = req.body;
     const success = await sendRegistrationEmail(
       data.email,
@@ -57,20 +61,6 @@ router.post('/send-registration-email', async (req, res) => {
   } catch (e: any) {
     console.error('Error sending email via API:', e);
     res.status(500).json({ error: 'Failed to send email', details: e.message, stack: e.stack });
-  }
-});
-
-router.post('/send-completion-email', async (req, res) => {
-  try {
-    const { toEmail, attendeeName, attendeeMobile, sessionTitle, certificateDataUrl } = req.body;
-    if (!toEmail || !attendeeName) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-    await sendCompletionEmail(toEmail, attendeeName, attendeeMobile, sessionTitle, certificateDataUrl);
-    res.json({ success: true, message: 'Completion email sent successfully' });
-  } catch (error) {
-    console.error('Failed to send completion email:', error);
-    res.status(500).json({ error: 'Failed to send completion email' });
   }
 });
 
