@@ -1,5 +1,5 @@
 import express from 'express';
-import { sendRegistrationEmail, sendCompletionEmail } from '../lib/emailService.js';
+import { sendRegistrationEmail, sendCompletionEmail } from '../lib/emailService.ts';
 
 const router = express.Router();
 

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+const fs = require('fs');
+const content = `import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { registrationService, sessionService } from '../lib/services';
 import { Registration, Session } from '../types';
@@ -60,14 +61,14 @@ export default function CertificatePage() {
         setIsGenerating(false);
         
         // Auto-download once
-        if (!sessionStorage.getItem(`cert_downloaded_${reg.id}`)) {
+        if (!sessionStorage.getItem(\`cert_downloaded_\${reg.id}\`)) {
           const link = document.createElement('a');
           link.href = dataUrl;
-          link.download = `Certificate_${reg.name.replace(/\s+/g, '_')}.png`;
+          link.download = \`Certificate_\${reg.name.replace(/\\s+/g, '_')}.png\`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          sessionStorage.setItem(`cert_downloaded_${reg.id}`, 'true');
+          sessionStorage.setItem(\`cert_downloaded_\${reg.id}\`, 'true');
         }
 
         // Send Email if not already sent for completion
@@ -146,7 +147,7 @@ export default function CertificatePage() {
               <div className="relative group max-w-[600px] w-full overflow-hidden rounded-xl border-4 border-white/10 shadow-2xl">
                  <img src={certUrl} alt="Certificate" className="w-full h-auto object-cover" />
                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <a href={certUrl} download={`Certificate_${registration?.name.replace(/\s+/g, '_')}.png`} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-transform active:scale-95 shadow-lg">
+                    <a href={certUrl} download={\`Certificate_\${registration?.name.replace(/\\s+/g, '_')}.png\`} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-transform active:scale-95 shadow-lg">
                        <Download className="w-5 h-5" /> Download Now
                     </a>
                  </div>
@@ -155,7 +156,7 @@ export default function CertificatePage() {
             
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
                {certUrl && (
-                  <a href={certUrl} download={`Certificate_${registration?.name.replace(/\s+/g, '_')}.png`} className="flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
+                  <a href={certUrl} download={\`Certificate_\${registration?.name.replace(/\\s+/g, '_')}.png\`} className="flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
                      <Download className="w-5 h-5" /> Download Certificate
                   </a>
                )}
@@ -184,3 +185,5 @@ export default function CertificatePage() {
     </div>
   );
 }
+`;
+fs.writeFileSync('src/pages/CertificatePage.tsx', content);

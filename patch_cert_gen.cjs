@@ -1,4 +1,6 @@
-export const generateCertificate = async (name: string, dateStr: string, certNo: string): Promise<string> => {
+const fs = require('fs');
+let code = fs.readFileSync('src/lib/certificateGenerator.ts', 'utf8');
+code = `export const generateCertificate = async (name: string, dateStr: string, certNo: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -37,3 +39,5 @@ export const generateCertificate = async (name: string, dateStr: string, certNo:
     img.onerror = reject;
   });
 };
+`;
+fs.writeFileSync('src/lib/certificateGenerator.ts', code);

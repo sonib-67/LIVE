@@ -44,6 +44,8 @@ export interface Registration {
   lastActiveAt?: string;
   completionEmailSent?: boolean;
   emailSent?: boolean;
+  certificateNo?: string;
+  certificateIssuedAt?: string;
 }
 
 export interface LiveAttendance {
