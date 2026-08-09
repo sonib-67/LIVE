@@ -14,23 +14,23 @@ export const generateCertificate = async (name: string, dateStr: string, certNo:
       ctx.drawImage(img, 0, 0);
       
       // Name
-      ctx.font = 'italic bold 48px "Playfair Display", serif';
+      ctx.font = 'italic bold 44px "Playfair Display", serif';
       ctx.fillStyle = '#1e293b';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(name.toUpperCase(), canvas.width / 2, 480);
+      ctx.fillText(name.toUpperCase(), canvas.width / 2, 505);
       
       // Date
       ctx.font = 'bold 18px Arial, sans-serif';
       ctx.fillStyle = '#333333';
       ctx.textAlign = 'center';
-      ctx.fillText(dateStr, 980, 160);
+      ctx.fillText(dateStr, 990, 175);
       
       // Certificate No
       ctx.font = 'bold 18px Arial, sans-serif';
       ctx.fillStyle = '#333333';
       ctx.textAlign = 'center';
-      ctx.fillText(certNo, 180, 340);
+      ctx.fillText(certNo, 155, 365);
       
       resolve(canvas.toDataURL('image/png'));
     };
