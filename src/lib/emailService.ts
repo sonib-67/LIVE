@@ -310,7 +310,7 @@ export async function sendCompletionEmail(toEmail: string, attendeeName: string,
       });
     }
 
-    const htmlBody = `
+        const htmlBody = \`
     <!DOCTYPE html>
     <html>
     <head>
@@ -324,11 +324,10 @@ export async function sendCompletionEmail(toEmail: string, attendeeName: string,
         .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; }
         .content { padding: 40px 30px; color: #3f3f46; line-height: 1.6; }
         .content p { margin: 0 0 20px 0; font-size: 16px; }
-        .details-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0; }
-        .details-box p { margin: 0 0 10px 0; font-size: 15px; }
-        .details-box p:last-child { margin: 0; }
-        .details-box strong { color: #0f172a; }
+        .content ul { margin: 0 0 20px 0; padding-left: 20px; }
+        .content li { margin-bottom: 10px; font-size: 16px; }
         .footer { background-color: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 14px; border-top: 1px solid #e2e8f0; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #10b981; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px; }
       </style>
     </head>
     <body>
@@ -337,29 +336,34 @@ export async function sendCompletionEmail(toEmail: string, attendeeName: string,
           <h1>Congratulations! 🎉</h1>
         </div>
         <div class="content">
-          <p>Hi <strong>${attendeeName}</strong>,</p>
-          <p>We are thrilled to inform you that you have successfully completed the <strong>${sessionTitle || 'Mushroom Farming'}</strong> training!</p>
-          <p>Your dedication and commitment to sustainable farming practices reflect excellence.</p>
-          <div class="details-box">
-            <p><strong>Name:</strong> ${attendeeName}</p>
-            <p><strong>Email:</strong> ${toEmail}</p>
-            <p><strong>Phone:</strong> ${attendeeMobile || 'N/A'}</p>
-          </div>
-          <p>Attached to this email is your official certificate of completion. You can also download it directly from the training portal.</p>
-          <p>We wish you the best in your mushroom farming journey!</p>
+          <p>Dear <strong>${attendeeName}</strong>,</p>
+          <p>Congratulations! We are thrilled to inform you that you have successfully completed your Mushroom Farming Training Program.</p>
+          <p>Your dedication and hard work have paid off, and you are now fully equipped with the practical knowledge and skills required to grow commercial mushrooms and manage a successful farm.</p>
+          <p><strong>What’s Next?</strong></p>
+          <ul>
+            <li><strong>Start Growing:</strong> It's time to put your skills into action.</li>
+            <li><strong>Get Supplies:</strong> Need high-quality mushroom spawn to kickstart your journey? We've got you covered.</li>
+            <li><strong>Stay Connected:</strong> Remember, our support doesn't end here. We are always here to help you troubleshoot and grow your business.</li>
+          </ul>
+          <p>If you need any assistance, mushroom spawn, or have questions about setting up your farm, feel free to reach out to us at <strong>support@mushroomtraining.online</strong> or call us at <strong>9203544140</strong>.</p>
+          <p>Wishing you massive success in your mushroom farming journey!</p>
+          <p>Best Regards,<br><strong>Organic Mushroom Farm</strong><br><a href="https://organicmushroomsfarm.com">https://organicmushroomsfarm.com</a></p>
+          <p style="text-align: center; margin-top: 30px;">
+             Attached to this email is your official Certificate of Completion in PDF/PNG format.
+          </p>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} ${SMTP_FROM_NAME}. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} Organic Mushroom Farm. All rights reserved.</p>
         </div>
       </div>
     </body>
     </html>
-    `;
+    \`;
 
     await t.sendMail({
       from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
       to: toEmail,
-      subject: `Congratulations! You've Completed the ${sessionTitle || 'Training'}`,
+      subject: '🎉 Congratulations on Completing Your Training at Organic Mushroom Farm!',
       html: htmlBody,
       attachments
     });

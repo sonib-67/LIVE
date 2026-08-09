@@ -3,7 +3,7 @@
 <head>
   <style>
     body { background: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    canvas { max-width: 100%; height: auto; }
+    canvas { max-width: 100%; height: auto; border: 1px solid red; }
   </style>
 </head>
 <body>
@@ -12,7 +12,26 @@
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
     const img = new Image();
-    img.src = 'public/organicsonib491.png'; // Assuming run from root via local server, wait just for testing
+    img.src = 'public/organicsonib491.png'; // Make sure this works in the test env
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      
+      ctx.font = 'italic bold 90px "Playfair Display", serif';
+      ctx.fillStyle = '#1e293b';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      // Let's draw a few lines to see where they land
+      ctx.fillText('Y 750', canvas.width / 2, 750);
+      ctx.fillText('Y 800', canvas.width / 2, 800);
+      ctx.fillText('Y 850', canvas.width / 2, 850);
+      ctx.fillText('Y 900', canvas.width / 2, 900);
+      
+      const dataUrl = canvas.toDataURL('image/png');
+      console.log(dataUrl);
+    };
   </script>
 </body>
 </html>

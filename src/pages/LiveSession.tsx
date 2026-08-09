@@ -436,7 +436,7 @@ export default function LiveSession() {
      if (phase === 'ended') {
         // Redirect to completion page immediately
         sessionStorage.clear();
-        navigate('/complete', { replace: true });
+        navigate(`/certificate/${joinToken}`, { replace: true });
      }
    }, [phase, navigate]);
  
@@ -667,9 +667,7 @@ export default function LiveSession() {
              </div>
            </motion.div>
          )}
-         {phase === 'ended' && session && registration && (
-           <TrainingCompleteView registration={registration} session={session} />
-         )}
+         
          {phase === 'waiting' && activeClassInfo && (
            <motion.div key="countdown" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 flex">
              <LiveCountdown 
@@ -774,121 +772,3 @@ export default function LiveSession() {
    );
  }
 
-function TrainingCompleteView({ registration, session }: { registration: Registration; session: Session }) {
-  const [certUrl, setCertUrl] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(true);
-
-  useEffect(() => {
-    const generate = async () => {
-      try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.src = '/organicsonib491.png';
-        
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-        });
-        
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        ctx.font = 'italic bold 90px "Playfair Display", serif';
-        ctx.fillStyle = '#1e293b';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        ctx.fillText(registration.name.toUpperCase(), canvas.width / 2, 690);
-        
-        const dataUrl = canvas.toDataURL('image/png');
-        setCertUrl(dataUrl);
-        setIsGenerating(false);
-
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = `Certificate_${registration.name.replace(/\s+/g, '_')}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        try {
-          await fetch('/api/send-completion-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              toEmail: registration.email,
-              attendeeName: registration.name,
-              attendeeMobile: registration.mobile,
-              sessionTitle: session.title,
-              certificateDataUrl: dataUrl
-            })
-          });
-          setEmailSent(true);
-        } catch(e) {
-          console.error('Failed to send completion email', e);
-        }
-
-      } catch (err) {
-        console.error('Failed to generate certificate', err);
-        setIsGenerating(false);
-      }
-    };
-    
-    generate();
-  }, [registration, session]);
-
-  return (
-    <motion.div key="ended" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-[200] flex items-center justify-center bg-[#0a051b] overflow-y-auto py-12">
-      <div className="text-center p-8 bg-slate-900/50 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl max-w-2xl w-full mx-4 my-auto">
-        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Award className="w-10 h-10 text-green-400" />
-        </div>
-        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Training Complete!</h2>
-        <p className="text-slate-300 text-base sm:text-lg mb-8 max-w-lg mx-auto">
-          Congratulations on successfully completing the <strong>{session.title}</strong> training. We are proud of your dedication.
-        </p>
-        
-        {isGenerating ? (
-           <div className="flex flex-col items-center gap-3 mb-8">
-             <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
-             <p className="text-sm text-indigo-300">Generating your certificate...</p>
-           </div>
-        ) : (
-          <div className="flex flex-col items-center gap-6">
-            {certUrl && (
-              <div className="relative group max-w-[500px] w-full overflow-hidden rounded-xl border-4 border-white/10 shadow-2xl">
-                 <img src={certUrl} alt="Certificate" className="w-full h-auto object-cover" />
-                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <a href={certUrl} download={`Certificate_${registration.name.replace(/\s+/g, '_')}.png`} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-transform active:scale-95 shadow-lg">
-                       <Download className="w-5 h-5" /> Download Now
-                    </a>
-                 </div>
-              </div>
-            )}
-            
-            <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
-               {certUrl && (
-                  <a href={certUrl} download={`Certificate_${registration.name.replace(/\s+/g, '_')}.png`} className="flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
-                     <Download className="w-5 h-5" /> Download Certificate
-                  </a>
-               )}
-            </div>
-            
-            {emailSent && (
-              <div className="flex items-center gap-2 text-green-400 text-sm bg-green-500/10 px-4 py-2 rounded-lg">
-                <MailCheck className="w-4 h-4" />
-                Certificate successfully sent to your email!
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
-}

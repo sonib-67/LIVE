@@ -42,6 +42,8 @@ export interface Registration {
   watchingTimeSeconds?: number;
   deviceInfo?: string;
   lastActiveAt?: string;
+  completionEmailSent?: boolean;
+  emailSent?: boolean;
 }
 
 export interface LiveAttendance {
