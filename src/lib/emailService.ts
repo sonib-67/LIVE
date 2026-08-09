@@ -310,7 +310,7 @@ export async function sendCompletionEmail(toEmail: string, attendeeName: string,
       });
     }
 
-        const htmlBody = \`
+        const htmlBody = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -358,7 +358,7 @@ export async function sendCompletionEmail(toEmail: string, attendeeName: string,
       </div>
     </body>
     </html>
-    \`;
+    `;
 
     await t.sendMail({
       from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
