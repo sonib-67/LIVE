@@ -92,23 +92,23 @@ export default function CertificatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a051b] flex items-center justify-center p-4 py-12 overflow-y-auto">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center p-8 bg-slate-900/50 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl max-w-3xl w-full mx-auto">
+    <div className="min-h-screen bg-[#0a051b] flex items-center justify-center p-4 py-8 overflow-y-auto">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center p-6 sm:p-8 bg-slate-900/50 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl max-w-3xl w-full mx-auto">
         
-        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-          <Award className="w-8 h-8 sm:w-10 sm:h-10 text-green-400" />
+        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Award className="w-7 h-7 sm:w-8 sm:h-8 text-green-400" />
         </div>
         
-        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">Training Successfully Completed!</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">Training Successfully Completed!</h2>
         
-        <div className="text-slate-300 text-sm sm:text-base mb-8 max-w-2xl mx-auto space-y-3 leading-relaxed">
-          <p className="text-lg sm:text-xl font-semibold text-white">Congratulations!</p>
+        <div className="text-slate-300 text-xs sm:text-sm mb-6 max-w-2xl mx-auto space-y-2 leading-relaxed">
+          <p className="text-base sm:text-lg font-semibold text-white">Congratulations!</p>
           <p>You have successfully completed your Mushroom Training.</p>
           <p>Your dedication, hard work, and commitment to learning are truly commendable.</p>
           <p>This is not just the completion of a course — it’s the beginning of your journey toward success.</p>
           <p>We wish you great success in your mushroom farming journey.</p>
-          <p className="text-green-400 font-semibold pt-2">Keep Learning • Keep Growing • Keep Succeeding!</p>
-          <p className="text-slate-400 italic text-xs sm:text-sm">— Organic Mushroom Farm</p>
+          <p className="text-green-400 font-semibold pt-1">Keep Learning • Keep Growing • Keep Succeeding!</p>
+          <p className="text-slate-400 italic text-[10px] sm:text-xs">— Organic Mushroom Farm</p>
         </div>
         
         {isGenerating ? (
