@@ -21,18 +21,18 @@ export const generateCertificate = async (name: string, dateStr: string, certNo:
       ctx.fillText(name.toUpperCase(), canvas.width / 2, 465);
       
       // Date
-      ctx.font = 'bold 18px Arial, sans-serif';
+      ctx.font = 'bold 16px Arial, sans-serif';
       ctx.fillStyle = '#333333';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(dateStr, 995, 185);
+      ctx.textBaseline = 'top';
+      ctx.fillText(dateStr, 990, 150);
       
       // Certificate No
-      ctx.font = 'bold 18px Arial, sans-serif';
+      ctx.font = 'bold 16px Arial, sans-serif';
       ctx.fillStyle = '#333333';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(certNo, 155, 380);
+      ctx.textBaseline = 'top';
+      ctx.fillText(certNo, 155, 345);
       
       resolve(canvas.toDataURL('image/png'));
     };
