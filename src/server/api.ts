@@ -58,8 +58,6 @@ router.post('/send-registration-email', async (req, res) => {
   }
 });
 
-export default router;
-
 router.post('/send-completion-email', async (req, res) => {
   try {
     const { toEmail, attendeeName, attendeeMobile, sessionTitle, certificateDataUrl } = req.body;
@@ -75,3 +73,5 @@ router.post('/send-completion-email', async (req, res) => {
     res.status(500).json({ error: 'Failed to send completion email' });
   }
 });
+
+export default router;
