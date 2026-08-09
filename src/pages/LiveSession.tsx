@@ -8,7 +8,7 @@ import LiveChat from '../components/LiveChat';
 import LiveCountdown from '../components/LiveCountdown';
 import { useServerTime } from '../hooks/useServerTime';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, AlertCircle, Fingerprint, ThumbsUp, ArrowLeft, Lock, Loader2, Play, MessageSquare } from 'lucide-react';
+import { Users, AlertCircle, Fingerprint, ThumbsUp, ArrowLeft, Lock, Loader2, Play, MessageSquare, Award, Download, MailCheck } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { db } from '../lib/firebase';
 import { doc, getDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
@@ -436,7 +436,7 @@ export default function LiveSession() {
      if (phase === 'ended') {
         // Redirect to completion page immediately
         sessionStorage.clear();
-        navigate('/complete', { replace: true });
+        navigate(`/certificate/${joinToken}`, { replace: true });
      }
    }, [phase, navigate]);
  
@@ -667,6 +667,7 @@ export default function LiveSession() {
              </div>
            </motion.div>
          )}
+         
          {phase === 'waiting' && activeClassInfo && (
            <motion.div key="countdown" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 flex">
              <LiveCountdown 
@@ -770,3 +771,4 @@ export default function LiveSession() {
      </div>
    );
  }
+

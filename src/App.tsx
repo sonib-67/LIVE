@@ -11,6 +11,7 @@ import AdminLiveMonitor from './pages/AdminLiveMonitor';
 import Register from './pages/Register';
 import LiveSession from './pages/LiveSession';
 import Completion from './pages/Completion';
+import CertificatePage from './pages/CertificatePage';
 import { useAuth } from './hooks/useAuth';
 
 const ExternalRedirect = ({ to }: { to: string }) => {
@@ -63,6 +64,7 @@ export default function App() {
         />
         <Route path="/register/:sessionId" element={<Register />} />
         <Route path="/live/:joinToken" element={<LiveSession />} />
+        <Route path="/certificate/:joinToken" element={<CertificatePage />} />
         <Route path="/complete" element={<Completion />} />
         <Route path="/live-complete" element={<Completion />} />
         <Route path="/" element={<ExternalRedirect to="https://organicmushroomsfarm.com/services" />} />
