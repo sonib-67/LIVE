@@ -555,6 +555,13 @@ export default function AdminDashboard() {
           <div className="flex items-center space-x-3 sm:space-x-4">
             <ThemeToggle />
             <button
+              onClick={() => navigate('/787941/videos')}
+              className="flex items-center space-x-2 bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/50 text-emerald-400 hover:text-white px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer hidden sm:flex"
+            >
+              <FileVideo className="w-4 h-4" />
+              <span>Video Links</span>
+            </button>
+            <button
               onClick={() => setIsCreating(true)}
               className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 active:scale-95 shadow-lg cursor-pointer"
             >

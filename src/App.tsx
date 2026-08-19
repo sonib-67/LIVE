@@ -8,10 +8,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLiveMonitor from './pages/AdminLiveMonitor';
+import AdminVideos from './pages/AdminVideos';
 import Register from './pages/Register';
 import LiveSession from './pages/LiveSession';
 import Completion from './pages/Completion';
 import CertificatePage from './pages/CertificatePage';
+import VideoInvitePage from './pages/VideoInvitePage';
+import WatchPage from './pages/WatchPage';
 import { useAuth } from './hooks/useAuth';
 
 const ExternalRedirect = ({ to }: { to: string }) => {
@@ -55,6 +58,14 @@ export default function App() {
           }
         />
         <Route
+          path="/787941/videos"
+          element={
+            <ProtectedRoute>
+              <AdminVideos />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/787941/live/:sessionId"
           element={
             <ProtectedRoute>
@@ -67,6 +78,8 @@ export default function App() {
         <Route path="/certificate/:joinToken" element={<CertificatePage />} />
         <Route path="/complete" element={<Completion />} />
         <Route path="/live-complete" element={<Completion />} />
+        <Route path="/invite/:inviteId" element={<VideoInvitePage />} />
+        <Route path="/watch/:accessId" element={<WatchPage />} />
         <Route path="/" element={<ExternalRedirect to="https://organicmushroomsfarm.com/services" />} />
         <Route path="*" element={<ExternalRedirect to="https://organicmushroomsfarm.com/services" />} />
       </Routes>
