@@ -9,6 +9,7 @@ export default function WatchPage() {
   const { accessId } = useParams<{ accessId: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [playerError, setPlayerError] = useState(false);
   const [access, setAccess] = useState<VideoAccess | null>(null);
 
   useEffect(() => {
@@ -109,21 +110,35 @@ export default function WatchPage() {
       
       <div className="flex-1 w-full max-w-[1600px] mx-auto flex flex-col justify-center relative p-4 lg:p-8">
         <div className="w-full aspect-video bg-slate-900 rounded-xl overflow-hidden shadow-2xl relative border border-white/5">
-          <ReactPlayer
-            url={access.m3u8Url}
-            width="100%"
-            height="100%"
-            controls={true}
-            playing={false}
-            config={{
-              file: {
-                forceHLS: true,
-                attributes: {
-                  controlsList: 'nodownload'
+          {playerError ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950 text-center p-6">
+              <AlertCircle className="w-12 h-12 text-rose-500 mb-4" />
+              <h3 className="text-white text-lg font-semibold mb-2">Stream Load Error</h3>
+              <p className="text-slate-400 text-sm max-w-md">
+                The video stream could not be loaded. This might be because the link is invalid, the stream is offline, or the hosting server does not allow playback (CORS issue).
+              </p>
+            </div>
+          ) : (
+            <ReactPlayer
+              url={access.m3u8Url}
+              width="100%"
+              height="100%"
+              controls={true}
+              playing={true}
+              onError={(e) => {
+                console.error('Player error:', e);
+                setPlayerError(true);
+              }}
+              config={{
+                file: {
+                  forceHLS: true,
+                  attributes: {
+                    controlsList: 'nodownload'
+                  }
                 }
-              }
-            }}
-          />
+              }}
+            />
+          )}
           {/* Watermark to deter screen recording */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10">
             <div className="transform -rotate-45 text-white/50 text-xl font-mono whitespace-nowrap">
