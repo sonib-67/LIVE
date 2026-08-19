@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import ReactPlayer from 'react-player';
+import Hls from 'hls.js';
 import { videoService } from '../lib/videoService';
 import { VideoAccess } from '../types/video';
 import { Loader2, AlertCircle, ShieldAlert } from 'lucide-react';
@@ -11,6 +11,7 @@ export default function WatchPage() {
   const [error, setError] = useState('');
   const [playerError, setPlayerError] = useState(false);
   const [access, setAccess] = useState<VideoAccess | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const initVideo = async () => {
@@ -19,12 +20,11 @@ export default function WatchPage() {
         setLoading(false);
         return;
       }
-
       try {
         const acc = await videoService.getAccessById(accessId);
         
         if (!acc) {
-          setError('Access record not found.');
+          setError('Access record not found. Your access may have been revoked.');
           setLoading(false);
           return;
         }
@@ -35,16 +35,9 @@ export default function WatchPage() {
           return;
         }
 
-        if (acc.viewsCount >= acc.viewsLimit) {
-          setError(`You have reached the maximum viewing limit (${acc.viewsLimit} views) for this video.`);
-          setLoading(false);
-          return;
-        }
-
-        // Increment view count on load
+        // Just log the view count internally, no limits enforced.
         await videoService.incrementViewCount(accessId, acc.viewsCount);
         
-        // Update local state to reflect new count
         setAccess({
           ...acc,
           viewsCount: acc.viewsCount + 1
@@ -70,6 +63,61 @@ export default function WatchPage() {
       document.removeEventListener('contextmenu', handleContextMenu);
     };
   }, [accessId]);
+
+  useEffect(() => {
+    let hls: Hls | null = null;
+
+    if (access && videoRef.current) {
+      const video = videoRef.current;
+
+      if (Hls.isSupported()) {
+        hls = new Hls({
+          maxMaxBufferLength: 30,
+        });
+        
+        hls.loadSource(access.m3u8Url);
+        hls.attachMedia(video);
+        
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play().catch(e => console.log('Auto-play prevented:', e));
+        });
+
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          if (data.fatal) {
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                console.error('Fatal network error encountered, try to recover');
+                hls?.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                console.error('Fatal media error encountered, try to recover');
+                hls?.recoverMediaError();
+                break;
+              default:
+                hls?.destroy();
+                setPlayerError(true);
+                break;
+            }
+          }
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Fallback for native HLS (Safari)
+        video.src = access.m3u8Url;
+        video.addEventListener('loadedmetadata', () => {
+          video.play().catch(e => console.log('Auto-play prevented:', e));
+        });
+        video.addEventListener('error', () => {
+           setPlayerError(true);
+        });
+      }
+    }
+
+    return () => {
+      if (hls) {
+        hls.destroy();
+      }
+    };
+  }, [access]);
 
   if (loading) {
     return (
@@ -103,7 +151,7 @@ export default function WatchPage() {
         <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full">
           <AlertCircle className="w-4 h-4 text-emerald-400" />
           <span className="text-xs text-slate-300 font-medium tracking-wide">
-            View {access.viewsCount} of {access.viewsLimit}
+            Unlimited Views
           </span>
         </div>
       </div>
@@ -119,24 +167,12 @@ export default function WatchPage() {
               </p>
             </div>
           ) : (
-            <ReactPlayer
-              url={access.m3u8Url}
-              width="100%"
-              height="100%"
-              controls={true}
-              playing={true}
-              onError={(e) => {
-                console.error('Player error:', e);
-                setPlayerError(true);
-              }}
-              config={{
-                file: {
-                  forceHLS: true,
-                  attributes: {
-                    controlsList: 'nodownload'
-                  }
-                }
-              }}
+            <video 
+              ref={videoRef}
+              controls 
+              controlsList="nodownload"
+              className="w-full h-full object-contain"
+              playsInline
             />
           )}
           {/* Watermark to deter screen recording */}
@@ -146,10 +182,6 @@ export default function WatchPage() {
             </div>
           </div>
         </div>
-      </div>
-      
-      <div className="p-4 text-center text-slate-500 text-xs">
-        Secure HLS Stream • Protected by Access Control
       </div>
     </div>
   );

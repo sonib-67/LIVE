@@ -119,6 +119,19 @@ export const videoService = {
     return { id: snapshot.id, ...snapshot.data() } as VideoAccess;
   },
 
+  async getAccessesByVideoId(videoId: string): Promise<VideoAccess[]> {
+    const q = query(
+      collection(db, 'videoAccess'), 
+      where('videoId', '==', videoId)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VideoAccess));
+  },
+
+  async deleteAccess(accessId: string): Promise<void> {
+    await deleteDoc(doc(db, 'videoAccess', accessId));
+  },
+
   async incrementViewCount(accessId: string, currentViews: number): Promise<void> {
     await updateDoc(doc(db, 'videoAccess', accessId), {
       viewsCount: currentViews + 1
