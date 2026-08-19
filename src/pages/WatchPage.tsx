@@ -146,14 +146,8 @@ export default function WatchPage() {
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      <div className="bg-[#0a0a0f] border-b border-white/5 py-4 px-6 flex justify-between items-center">
+      <div className="bg-[#0a0a0f] border-b border-white/5 py-4 px-6 flex items-center">
         <h1 className="text-white font-semibold">{access.videoTitle}</h1>
-        <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full">
-          <AlertCircle className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs text-slate-300 font-medium tracking-wide">
-            Unlimited Views
-          </span>
-        </div>
       </div>
       
       <div className="flex-1 w-full max-w-[1600px] mx-auto flex flex-col justify-center relative p-4 lg:p-8">
