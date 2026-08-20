@@ -5,6 +5,21 @@ import { videoService } from '../lib/videoService';
 import { VideoAccess } from '../types/video';
 import { Loader2, AlertCircle, ShieldAlert } from 'lucide-react';
 
+function getGoogleDriveEmbedUrl(url: string): string | null {
+  if (!url) return null;
+  try {
+    if (url.includes('drive.google.com')) {
+      const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default function WatchPage() {
   const { accessId } = useParams<{ accessId: string }>();
   const [loading, setLoading] = useState(true);
@@ -12,6 +27,9 @@ export default function WatchPage() {
   const [playerError, setPlayerError] = useState(false);
   const [access, setAccess] = useState<VideoAccess | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const driveEmbedUrl = access ? getGoogleDriveEmbedUrl(access.m3u8Url) : null;
+  const isDriveVideo = !!driveEmbedUrl;
 
   useEffect(() => {
     const initVideo = async () => {
@@ -65,6 +83,7 @@ export default function WatchPage() {
   }, [accessId]);
 
   useEffect(() => {
+    if (isDriveVideo) return; // Do not initialize HLS for Google Drive links
     let hls: Hls | null = null;
 
     if (access && videoRef.current) {
@@ -117,7 +136,7 @@ export default function WatchPage() {
         hls.destroy();
       }
     };
-  }, [access]);
+  }, [access, isDriveVideo]);
 
   if (loading) {
     return (
@@ -160,6 +179,13 @@ export default function WatchPage() {
                 The video stream could not be loaded. This might be because the link is invalid, the stream is offline, or the hosting server does not allow playback (CORS issue).
               </p>
             </div>
+          ) : isDriveVideo && driveEmbedUrl ? (
+            <iframe 
+              src={driveEmbedUrl}
+              className="w-full h-full border-0 bg-black"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
           ) : (
             <video 
               ref={videoRef}
